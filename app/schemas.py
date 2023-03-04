@@ -8,9 +8,10 @@ class Project:
         self.project_end = project_end
 
 class ParameterSet:
-    def __init__(self, project_id, parameters, parameter_set_id=None, active_from=None, active_until=None):
+    def __init__(self, project_id, training_parameters, minimum_software_version, parameter_set_id=None, active_from=None, active_until=None):
         self.project_id = project_id
-        self.parameters = parameters
+        self.training_parameters = training_parameters
+        self.minimum_software_version = minimum_software_version
         self.parameter_set_id = parameter_set_id
         self.active_from = active_from
         self.active_until = active_until
@@ -56,7 +57,8 @@ class ParameterSetSchema(Schema):
     parameter_set_id = fields.Integer()
     project_id = fields.Integer(required=True)
     # not sure how to indicate JSON-compatible hierarchy of Python collections 
-    parameters = fields.Raw(required=True)
+    training_parameters = fields.Raw(required=True)
+    minimum_software_version = fields.Integer(required=True)
     active_from = fields.DateTime()
     active_until = fields.DateTime()
     
