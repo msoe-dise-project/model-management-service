@@ -75,18 +75,26 @@ if __name__ == "__main__":
                         "model_id integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY, "
                         "project_id integer NOT NULL, "
                         "parameter_set_id integer NOT NULL, "
-                        "data_start timestamp NOT NULL, "
-                        "data_end timestamp NOT NULL, "
+                        "training_data_from timestamp NOT NULL, "
+                        "training_data_until timestamp NOT NULL, "
+                        # serialized objects are stored as hex string representations of bytes objects
                         "model_object text NOT NULL, "
                         "train_timestamp timestamp NOT NULL, "
-                        "test_timestamp timestamp, "
-                        # the following are nullable on purpose.
-                        # probably could use a secondary table for this
-                        # but joins... ewww
-                        "test_metrics jsonb, "
-                        "passed_testing bool, "
+                        # nullable on purpose for inactive or indefinite configurations
                         "active_from timestamp, "
                         "active_until timestamp "
+                        ");")
+                        
+            cur.execute("DROP TABLE IF EXISTS model_tests;")
+
+            cur.execute("CREATE TABLE model_tests ( "
+                        "test_id integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY, "
+                        "project_id integer NOT NULL, "
+                        "parameter_set_id integer NOT NULL, "
+                        "model_id integer NOT NULL, "
+                        "test_timestamp timestamp NOT NULL, "
+                        "test_metrics jsonb NOT NULL, "
+                        "passed_testing bool NOT NULL "
                         ");")
 
             cur.execute("DROP ROLE IF EXISTS {};".format(SERVICE_USER))
@@ -95,6 +103,7 @@ if __name__ == "__main__":
             cur.execute("GRANT SELECT, INSERT, UPDATE ON projects TO {};".format(SERVICE_USER))
             cur.execute("GRANT SELECT, INSERT, UPDATE ON parameter_sets TO {};".format(SERVICE_USER))
             cur.execute("GRANT SELECT, INSERT, UPDATE ON trained_models TO {};".format(SERVICE_USER))
+            cur.execute("GRANT SELECT, INSERT, UPDATE ON model_tests TO {};".format(SERVICE_USER))
 
         conn.commit()
 

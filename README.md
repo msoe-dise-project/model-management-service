@@ -39,26 +39,34 @@ PUT /parameter_sets/{setId}
 
 	Update the active start and/or active end properties
 
-POST /models
+POST /trained_models
 
 	Create a trained_model
 
-GET /models
+GET /trained_models
 
-	List ids of active models. Filter status by active, tested, passed_testing, etc.
+	List ids of trained models. Filter status by active, tested, passed_testing, etc.
 	Get models for a particular parameter set.
 
-GET /models/{modelId}
+GET /trained_models/{modelId}
 
 	Get a model by Id
 
-POST /models/{modelId}/test_results
-
-	Create testing results, timestamp, and passed / failed
-
-PUT /models/{modelId}/active_interval
+PUT /trained_models/{modelId}/active_interval
 
 	Set start date or end date.  If dates already set, then not allowed to change.
+	
+POST /model_tests
+
+	Create model test results
+
+GET /model_tests
+
+	List ids of model test results.  Filter by passed vs failed tests.
+
+GET /model_tests/{modelId}
+
+	Get a model test results by Id
 
 
 	

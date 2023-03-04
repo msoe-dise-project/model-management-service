@@ -18,8 +18,8 @@ class TrainedModelTests(unittest.TestCase):
         
         obj = { "project_id" : 5,
                 "parameter_set_id" : 1,
-                "data_start" : (dt.datetime.now() - dt.timedelta(days=3)).isoformat(),
-                "data_end" : dt.datetime.now().isoformat(),
+                "training_data_from" : (dt.datetime.now() - dt.timedelta(days=3)).isoformat(),
+                "training_data_until" : dt.datetime.now().isoformat(),
                 "model_object" : pickle.dumps(test_model).hex(),
                 "train_timestamp" : dt.datetime.now().isoformat() }
 
@@ -38,8 +38,8 @@ class TrainedModelTests(unittest.TestCase):
         
         obj1 = { "project_id" : 5,
                  "parameter_set_id" : 1,
-                 "data_start" : (dt.datetime.now() - dt.timedelta(days=3)).isoformat(),
-                 "data_end" : dt.datetime.now().isoformat(),
+                 "training_data_from" : (dt.datetime.now() - dt.timedelta(days=3)).isoformat(),
+                 "training_data_until" : dt.datetime.now().isoformat(),
                  "model_object" : pickle.dumps(test_model1).hex(),
                  "train_timestamp" : dt.datetime.now().isoformat() }
                  
@@ -51,26 +51,26 @@ class TrainedModelTests(unittest.TestCase):
         test_model2 = set([5, 21, 13])
         obj2 = { "project_id" : 5,
                  "parameter_set_id" : 2,
-                 "data_start" : (dt.datetime.now() - dt.timedelta(days=3)).isoformat(),
-                 "data_end" : dt.datetime.now().isoformat(),
+                 "training_data_from" : (dt.datetime.now() - dt.timedelta(days=3)).isoformat(),
+                 "training_data_until" : dt.datetime.now().isoformat(),
                  "model_object" : pickle.dumps(test_model2).hex(),
                  "train_timestamp" : dt.datetime.now().isoformat() }
                  
         response = requests.post(self.get_url(),
-                            json=obj1)
+                            json=obj2)
 
         self.assertEqual(response.status_code, 200)
 
         test_model3 = set([5, 21, 13])
         obj3 = { "project_id" : 5,
                  "parameter_set_id" : 3,
-                 "data_start" : (dt.datetime.now() - dt.timedelta(days=3)).isoformat(),
-                 "data_end" : dt.datetime.now().isoformat(),
+                 "training_data_from" : (dt.datetime.now() - dt.timedelta(days=3)).isoformat(),
+                 "training_data_until" : dt.datetime.now().isoformat(),
                  "model_object" : pickle.dumps(test_model3).hex(),
                  "train_timestamp" : dt.datetime.now().isoformat() }
                  
         response = requests.post(self.get_url(),
-                            json=obj1)
+                            json=obj3)
 
         self.assertEqual(response.status_code, 200)
 
@@ -85,8 +85,8 @@ class TrainedModelTests(unittest.TestCase):
         test_model = set([5, 21, 13])
         obj1 = { "project_id" : 5,
                  "parameter_set_id" : 49,
-                 "data_start" : (dt.datetime.now() - dt.timedelta(days=3)).isoformat(),
-                 "data_end" : dt.datetime.now().isoformat(),
+                 "training_data_from" : (dt.datetime.now() - dt.timedelta(days=3)).isoformat(),
+                 "training_data_until" : dt.datetime.now().isoformat(),
                  "model_object" : pickle.dumps(test_model).hex(),
                  "train_timestamp" : dt.datetime.now().isoformat() }
 
@@ -108,41 +108,12 @@ class TrainedModelTests(unittest.TestCase):
         unpickled_model = pickle.loads(bytes.fromhex(json_response["model_object"]))
         self.assertEqual(test_model, unpickled_model)
         
-    def test_update_test_results(self):
-        test_model = set([5, 21, 13])
-        obj1 = { "project_id" : 5,
-                 "parameter_set_id" : 49,
-                 "data_start" : (dt.datetime.now() - dt.timedelta(days=3)).isoformat(),
-                 "data_end" : dt.datetime.now().isoformat(),
-                 "model_object" : pickle.dumps(test_model).hex(),
-                 "train_timestamp" : dt.datetime.now().isoformat() }
-
-        response = requests.post(self.get_url(),
-                            json=obj1)
-
-        self.assertEqual(response.status_code, 200)
-
-        json_response = response.json()
-
-        model_id = json_response["model_id"]
-        
-        test_results = {
-            "test_timestamp" : dt.datetime.now().isoformat(),
-            "test_metrics" : { "recall" : 0.8, "precision" : 0.2 },
-            "passed_testing" : True
-        }
-        
-        url = os.path.join(self.get_url(), str(model_id), "test_results")
-        response = requests.put(url, json=test_results)
-
-        self.assertEqual(response.status_code, 200)
-        
     def test_update_active_interval(self):
         test_model = set([5, 21, 13])
         obj1 = { "project_id" : 5,
                  "parameter_set_id" : 49,
-                 "data_start" : (dt.datetime.now() - dt.timedelta(days=3)).isoformat(),
-                 "data_end" : dt.datetime.now().isoformat(),
+                 "training_data_from" : (dt.datetime.now() - dt.timedelta(days=3)).isoformat(),
+                 "training_data_until" : dt.datetime.now().isoformat(),
                  "model_object" : pickle.dumps(test_model).hex(),
                  "train_timestamp" : dt.datetime.now().isoformat() }
 

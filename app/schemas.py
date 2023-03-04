@@ -16,22 +16,23 @@ class ParameterSet:
         self.active_until = active_until
 
 class TrainedModel:
-    def __init__(self, project_id, parameter_set_id, data_start, data_end, model_object, train_timestamp, model_id=None, test_timestamp=None, test_metrics=None, passed_testing=None, active_from=None, active_until=None):
+    def __init__(self, project_id, parameter_set_id, training_data_from, training_data_until, model_object, train_timestamp, model_id=None, active_from=None, active_until=None):
         self.project_id = project_id
         self.parameter_set_id = parameter_set_id
-        self.data_start = data_start
-        self.data_end = data_end
+        self.training_data_from = training_data_from
+        self.training_data_until = training_data_until
         self.model_object = model_object
         self.train_timestamp = train_timestamp
         self.model_id = model_id
-        self.test_timestamp = test_timestamp
-        self.test_metrics = test_metrics
-        self.passed_testing = passed_testing
         self.active_from = active_from
         self.active_until = active_until
         
-class ModelTestResults:
-    def __init__(self, test_timestamp, test_metrics, passed_testing):
+class ModelTest:
+    def __init__(self, project_id, parameter_set_id, model_id, test_timestamp, test_metrics, passed_testing, test_id=None):
+        self.test_id = test_id
+        self.project_id = project_id
+        self.parameter_set_id = parameter_set_id
+        self.model_id = model_id
         self.test_timestamp = test_timestamp
         self.test_metrics = test_metrics
         self.passed_testing = passed_testing
@@ -67,13 +68,10 @@ class TrainedModelSchema(Schema):
     model_id = fields.Integer()
     project_id = fields.Integer(required=True)
     parameter_set_id = fields.Integer(required=True)
-    data_start = fields.DateTime(required=True)
-    data_end = fields.DateTime(required=True)
+    training_data_from = fields.DateTime(required=True)
+    training_data_until = fields.DateTime(required=True)
     model_object = fields.Raw(required=True)
     train_timestamp = fields.DateTime(required=True)
-    test_timestamp = fields.DateTime()
-    test_results = fields.Raw()
-    passed_testing = fields.Boolean()
     active_from = fields.DateTime()
     active_until = fields.DateTime()
     
@@ -81,14 +79,18 @@ class TrainedModelSchema(Schema):
     def make_trained_model(self, data, **kwargs):
         return TrainedModel(**data)
         
-class ModelTestResultsSchema(Schema):
+class ModelTestSchema(Schema):
+    test_id = fields.Integer()
+    model_id = fields.Integer(required=True)
+    project_id = fields.Integer(required=True)
+    parameter_set_id = fields.Integer(required=True)
     test_timestamp = fields.DateTime(required=True)
     test_metrics = fields.Raw(required=True)
     passed_testing = fields.Boolean(required=True)
     
     @post_load
     def make_test_results(self, data, **kwargs):
-        return ModelTestResults(**data)
+        return ModelTest(**data)
         
 class ActiveIntervalSchema(Schema):
     active_from = fields.DateTime()

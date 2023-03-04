@@ -12,6 +12,7 @@ import psycopg2
 from psycopg2.extras import Json
 
 import app.database as db
+from app.model_tests import blueprint as model_tests_blueprint
 from app.parameter_sets import blueprint as parameter_sets_blueprint
 from app.projects import blueprint as projects_blueprint
 from app.trained_models import blueprint as trained_models_blueprint
@@ -22,6 +23,7 @@ def create_app():
     
     db.check_environment_parameters()
     
+    app.register_blueprint(model_tests_blueprint)
     app.register_blueprint(parameter_sets_blueprint)
     app.register_blueprint(projects_blueprint)
     app.register_blueprint(trained_models_blueprint)
