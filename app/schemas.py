@@ -1,11 +1,9 @@
 from marshmallow import Schema, fields, post_load
 
 class Project:
-    def __init__(self, project_name, project_start, project_id=None, project_end=None):
+    def __init__(self, project_name, project_id=None):
         self.project_name = project_name
-        self.project_start = project_start
         self.project_id = project_id
-        self.project_end = project_end
 
 class ParameterSet:
     def __init__(self, project_id, training_parameters, minimum_software_version, parameter_set_id=None, active_from=None, active_until=None):
@@ -46,8 +44,6 @@ class ActiveInterval:
 class ProjectSchema(Schema):
     project_id = fields.Integer()
     project_name = fields.String(required=True)
-    project_start = fields.DateTime(required=True)
-    project_end = fields.DateTime()
     
     @post_load
     def make_project(self, data, **kwargs):

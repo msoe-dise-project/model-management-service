@@ -52,10 +52,7 @@ if __name__ == "__main__":
 
             cur.execute("CREATE TABLE projects ("
                         "project_id integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY, "
-                        "project_name text NOT NULL, "
-                        "project_start timestamp NOT NULL, "
-                        # nullable on purpose for indefinite configurations
-                        "project_end timestamp "
+                        "project_name text NOT NULL "
                         ");")
             
             cur.execute("DROP TABLE IF EXISTS parameter_sets;")
