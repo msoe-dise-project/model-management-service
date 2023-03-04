@@ -12,7 +12,7 @@ class ProjectsTests(unittest.TestCase):
     def get_url(self):
         return os.path.join(os.environ[BASE_URL_KEY], "v1/projects")
 
-    def test_create_success(self):
+    def test_create(self):
         obj = { "project_name" : "test",
                 "project_start" : dt.datetime.now().isoformat() }
 
