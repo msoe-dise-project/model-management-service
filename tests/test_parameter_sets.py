@@ -169,13 +169,15 @@ class ParameterSetsTests(unittest.TestCase):
                 "active_from" : _from }
 
         response = requests.post(self.get_url(),
-                            json=obj)
+                                 json=obj)
 
         self.assertEqual(response.status_code, 200)
 
         json_response = response.json()
 
-        url = os.path.join(self.get_url(), str(json_response["parameter_set_id"]))
+        url = os.path.join(self.get_url(),
+                           str(json_response["parameter_set_id"]),
+                           "active_interval")
         
         update = { "active_from" : _from,
                    "active_until" : _until }

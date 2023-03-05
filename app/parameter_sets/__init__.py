@@ -75,7 +75,7 @@ def get_parameter_set(parameter_set_id):
 
     return jsonify(obj)
 
-@blueprint.route('/v1/parameter_sets/<int:parameter_set_id>', methods=["PUT"])
+@blueprint.route('/v1/parameter_sets/<int:parameter_set_id>/active_interval', methods=["PUT"])
 def update_parameter_set_active_interval(parameter_set_id):
     active_interval = ActiveIntervalSchema().load(request.get_json())
     
