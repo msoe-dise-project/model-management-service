@@ -60,7 +60,7 @@ if __name__ == "__main__":
             cur.execute("CREATE TABLE parameter_sets ( "
                         "parameter_set_id integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY, "
                         "project_id integer NOT NULL, "
-                        "training_parameters jsonb NOT NULL, "
+                        "training_parameters text NOT NULL, "
                         "minimum_software_version integer NOT NULL, "
                         # nullable on purpose for inactive or indefinite configurations
                         "active_from timestamp, "
@@ -91,7 +91,7 @@ if __name__ == "__main__":
                         "parameter_set_id integer NOT NULL, "
                         "model_id integer NOT NULL, "
                         "test_timestamp timestamp NOT NULL, "
-                        "test_metrics jsonb NOT NULL, "
+                        "test_metrics text NOT NULL, "
                         "passed_testing bool NOT NULL "
                         ");")
 

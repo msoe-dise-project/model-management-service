@@ -1,6 +1,6 @@
 import argparse
 import datetime as dt
-import pickle
+import json
 import os
 import sys
 import unittest
@@ -21,7 +21,7 @@ class ModelTestsTests(unittest.TestCase):
                 "parameter_set_id" : 1,
                 "model_id" : 2,
                 "test_timestamp" : dt.datetime.now().isoformat(),
-                "test_metrics" : { "recall" : 0.8, "precision" : 0.2 },
+                "test_metrics" : json.dumps({ "recall" : 0.8, "precision" : 0.2 }),
                 "passed_testing" : True
               }
 
@@ -41,7 +41,7 @@ class ModelTestsTests(unittest.TestCase):
                 "parameter_set_id" : 1,
                 "model_id" : 2,
                 "test_timestamp" : dt.datetime.now().isoformat(),
-                "test_metrics" : { "recall" : 0.8, "precision" : 0.2 },
+                "test_metrics" : json.dumps({ "recall" : 0.8, "precision" : 0.2 }),
                 "passed_testing" : True
               }
                  
@@ -55,7 +55,7 @@ class ModelTestsTests(unittest.TestCase):
                 "parameter_set_id" : 1,
                 "model_id" : 3,
                 "test_timestamp" : dt.datetime.now().isoformat(),
-                "test_metrics" : { "recall" : 0.8, "precision" : 0.2 },
+                "test_metrics" : json.dumps({ "recall" : 0.8, "precision" : 0.2 }),
                 "passed_testing" : True
               }
 
@@ -69,7 +69,7 @@ class ModelTestsTests(unittest.TestCase):
                 "parameter_set_id" : 1,
                 "model_id" : 53,
                 "test_timestamp" : dt.datetime.now().isoformat(),
-                "test_metrics" : { "recall" : 0.8, "precision" : 0.2 },
+                "test_metrics" : json.dumps({ "recall" : 0.8, "precision" : 0.2 }),
                 "passed_testing" : True
               }
                  
@@ -91,7 +91,7 @@ class ModelTestsTests(unittest.TestCase):
                 "parameter_set_id" : 1,
                 "model_id" : 2,
                 "test_timestamp" : dt.datetime.now().isoformat(),
-                "test_metrics" : { "recall" : 0.8, "precision" : 0.2 },
+                "test_metrics" : json.dumps({ "recall" : 0.8, "precision" : 0.2 }),
                 "passed_testing" : True
               }
 

@@ -1,5 +1,6 @@
 import argparse
 import datetime as dt
+import json
 import os
 import sys
 import unittest
@@ -14,7 +15,7 @@ class ParameterSetsTests(unittest.TestCase):
 
     def test_create_success(self):
         obj = { "project_id" : 5,
-                "training_parameters" : { "param1" : 1, "param2" : "2" },
+                "training_parameters" : json.dumps({ "param1" : 1, "param2" : "2" }),
                 "minimum_software_version" : 3,
                 "active_from" : dt.datetime.now().isoformat() }
 
@@ -30,7 +31,7 @@ class ParameterSetsTests(unittest.TestCase):
         
     def test_create_success_no_end(self):
         obj = { "project_id" : 5,
-                "training_parameters" : { "param1" : 1, "param2" : "2" },
+                "training_parameters" : json.dumps({ "param1" : 1, "param2" : "2" }),
                 "minimum_software_version" : 3,
                 "active_from" : (dt.datetime.now() - dt.timedelta(days=1)).isoformat() }
 
@@ -48,7 +49,7 @@ class ParameterSetsTests(unittest.TestCase):
         param_ids = set()
         
         obj = { "project_id" : 5,
-                "training_parameters" : { "param1" : 1, "param2" : "2" },
+                "training_parameters" : json.dumps({ "param1" : 1, "param2" : "2" }),
                 "minimum_software_version" : 3,
                 "active_from" : dt.datetime.now().isoformat() }
                 
@@ -62,7 +63,7 @@ class ParameterSetsTests(unittest.TestCase):
         param_ids.add(json_response["parameter_set_id"])
                 
         obj = { "project_id" : 6,
-                "training_parameters" : { "param1" : 1, "param2" : "2" },
+                "training_parameters" : json.dumps({ "param1" : 1, "param2" : "2" }),
                 "minimum_software_version" : 3,
                 "active_from" : dt.datetime.now().isoformat(),
                 "active_until" : (dt.datetime.now() + dt.timedelta(days=3)).isoformat() }
@@ -78,7 +79,7 @@ class ParameterSetsTests(unittest.TestCase):
                 
         obj = { "project_id" : 7,
                 "minimum_software_version" : 3,
-                "training_parameters" : { "param1" : 1, "param2" : "2" } }
+                "training_parameters" : json.dumps({ "param1" : 1, "param2" : "2" }) }
                 
         response = requests.post(self.get_url(),
                             json=obj)
@@ -103,7 +104,7 @@ class ParameterSetsTests(unittest.TestCase):
     
     def test_get_by_id(self):
         obj = { "project_id" : 5,
-                "training_parameters" : { "param1" : 1, "param2" : "2" },
+                "training_parameters" : json.dumps({ "param1" : 1, "param2" : "2" }),
                 "minimum_software_version" : 1,
                 "active_from" : dt.datetime.now().isoformat(),
                 "active_until" : (dt.datetime.now() + dt.timedelta(days=3)).isoformat() }
@@ -134,7 +135,7 @@ class ParameterSetsTests(unittest.TestCase):
     def test_get_by_id_no_end(self):
         obj = { "project_id" : 5,
                 "minimum_software_version" : 5,
-                "training_parameters" : { "param1" : 1, "param2" : "2" },
+                "training_parameters" : json.dumps({ "param1" : 1, "param2" : "2" }),
                 "active_from" : dt.datetime.now().isoformat() }
 
         response = requests.post(self.get_url(),
@@ -163,7 +164,7 @@ class ParameterSetsTests(unittest.TestCase):
         _from = (dt.datetime.now() - dt.timedelta(days=1)).isoformat()
         _until = dt.datetime.now().isoformat()
         obj = { "project_id" : 5,
-                "training_parameters" : { "param1" : 1, "param2" : "2" },
+                "training_parameters" : json.dumps({ "param1" : 1, "param2" : "2" }),
                 "minimum_software_version" : 3,
                 "active_from" : _from }
 

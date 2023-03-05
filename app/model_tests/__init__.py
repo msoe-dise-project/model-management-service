@@ -6,7 +6,6 @@ from flask import request
 from flask.json import jsonify
 
 import psycopg2
-from psycopg2.extras import Json
 
 from app.database import get_database_uri
 from app.schemas import ModelTestSchema
@@ -29,7 +28,7 @@ def create_trained_model():
                          model_test.parameter_set_id,
                          model_test.model_id,
                          model_test.test_timestamp,
-                         Json(model_test.test_metrics),
+                         model_test.test_metrics,
                          model_test.passed_testing))
 
             test_id = cur.fetchone()[0]
