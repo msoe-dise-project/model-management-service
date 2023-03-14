@@ -58,38 +58,35 @@ if __name__ == "__main__":
             cur.execute("DROP TABLE IF EXISTS parameter_sets;")
 
             cur.execute("CREATE TABLE parameter_sets ( "
-                        "parameter_set_id integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY, "
                         "project_id integer NOT NULL, "
+                        "parameter_set_id integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY, "
                         "training_parameters text NOT NULL, "
-                        "minimum_software_version integer NOT NULL, "
-                        # nullable on purpose for inactive or indefinite configurations
-                        "active_from timestamp, "
-                        "active_until timestamp "
+                        "is_active boolean NOT NULL "
                         ");")
 
             cur.execute("DROP TABLE IF EXISTS trained_models;")
+            cur.execute("DROP TYPE IF EXISTS model_status;")
 
+            cur.execute("CREATE TYPE model_deployment_stage AS ENUM ('testing', 'production', 'retired');")
             cur.execute("CREATE TABLE trained_models ( "
-                        "model_id integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY, "
                         "project_id integer NOT NULL, "
                         "parameter_set_id integer NOT NULL, "
+                        "model_id integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY, "
                         "training_data_from timestamp NOT NULL, "
                         "training_data_until timestamp NOT NULL, "
                         # serialized objects are stored as hex string representations of bytes objects
                         "model_object text NOT NULL, "
                         "train_timestamp timestamp NOT NULL, "
-                        # nullable on purpose for inactive or indefinite configurations
-                        "active_from timestamp, "
-                        "active_until timestamp "
+                        "deployment_stage model_deployment_stage NOT NULL "
                         ");")
                         
             cur.execute("DROP TABLE IF EXISTS model_tests;")
 
             cur.execute("CREATE TABLE model_tests ( "
-                        "test_id integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY, "
                         "project_id integer NOT NULL, "
                         "parameter_set_id integer NOT NULL, "
                         "model_id integer NOT NULL, "
+                        "test_id integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY, "  
                         "test_timestamp timestamp NOT NULL, "
                         "test_metrics text NOT NULL, "
                         "passed_testing bool NOT NULL "

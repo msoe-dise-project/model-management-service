@@ -42,10 +42,10 @@ GET /parameter_sets/{setId}
 > Get a parameter set by id
 
 ```
-PUT /parameter_sets/{setId}/active_interval
+PATCH /parameter_sets/{setId}
 ```
 
-> Update the active start and/or active end properties
+> Update the is\_active status
 
 
 ## Trained Models
@@ -69,10 +69,10 @@ GET /trained_models/{modelId}
 > Get a model by Id
 
 ```
-PUT /trained_models/{modelId}/active_interval
+PATCH /trained_models/{modelId}
 ```
 
-> Set start date or end date.  If dates already set, then not allowed to change.
+> Set deployment stage.  Valid values are `testing`, `production`, or `retired`.
 
 ## Model Tests
 

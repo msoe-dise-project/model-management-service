@@ -21,7 +21,9 @@ class TrainedModelTests(unittest.TestCase):
                 "training_data_from" : (dt.datetime.now() - dt.timedelta(days=3)).isoformat(),
                 "training_data_until" : dt.datetime.now().isoformat(),
                 "model_object" : pickle.dumps(test_model).hex(),
-                "train_timestamp" : dt.datetime.now().isoformat() }
+                "train_timestamp" : dt.datetime.now().isoformat(),
+                "deployment_stage" : "testing"
+        }
 
         response = requests.post(self.get_url(),
                             json=obj)
@@ -41,7 +43,9 @@ class TrainedModelTests(unittest.TestCase):
                  "training_data_from" : (dt.datetime.now() - dt.timedelta(days=3)).isoformat(),
                  "training_data_until" : dt.datetime.now().isoformat(),
                  "model_object" : pickle.dumps(test_model1).hex(),
-                 "train_timestamp" : dt.datetime.now().isoformat() }
+                 "train_timestamp" : dt.datetime.now().isoformat(),
+                 "deployment_stage" : "testing"
+        }
                  
         response = requests.post(self.get_url(),
                             json=obj1)
@@ -54,7 +58,9 @@ class TrainedModelTests(unittest.TestCase):
                  "training_data_from" : (dt.datetime.now() - dt.timedelta(days=3)).isoformat(),
                  "training_data_until" : dt.datetime.now().isoformat(),
                  "model_object" : pickle.dumps(test_model2).hex(),
-                 "train_timestamp" : dt.datetime.now().isoformat() }
+                 "train_timestamp" : dt.datetime.now().isoformat(),
+                 "deployment_stage" : "testing"
+        }
                  
         response = requests.post(self.get_url(),
                             json=obj2)
@@ -67,7 +73,9 @@ class TrainedModelTests(unittest.TestCase):
                  "training_data_from" : (dt.datetime.now() - dt.timedelta(days=3)).isoformat(),
                  "training_data_until" : dt.datetime.now().isoformat(),
                  "model_object" : pickle.dumps(test_model3).hex(),
-                 "train_timestamp" : dt.datetime.now().isoformat() }
+                 "train_timestamp" : dt.datetime.now().isoformat(),
+                 "deployment_stage" : "testing"
+        }
                  
         response = requests.post(self.get_url(),
                             json=obj3)
@@ -88,7 +96,9 @@ class TrainedModelTests(unittest.TestCase):
                  "training_data_from" : (dt.datetime.now() - dt.timedelta(days=3)).isoformat(),
                  "training_data_until" : dt.datetime.now().isoformat(),
                  "model_object" : pickle.dumps(test_model).hex(),
-                 "train_timestamp" : dt.datetime.now().isoformat() }
+                 "train_timestamp" : dt.datetime.now().isoformat(),
+                 "deployment_stage" : "testing"
+        }
 
         response = requests.post(self.get_url(),
                             json=obj1)
@@ -108,14 +118,16 @@ class TrainedModelTests(unittest.TestCase):
         unpickled_model = pickle.loads(bytes.fromhex(json_response["model_object"]))
         self.assertEqual(test_model, unpickled_model)
         
-    def test_update_active_interval(self):
+    def test_model_status(self):
         test_model = set([5, 21, 13])
         obj1 = { "project_id" : 5,
                  "parameter_set_id" : 49,
                  "training_data_from" : (dt.datetime.now() - dt.timedelta(days=3)).isoformat(),
                  "training_data_until" : dt.datetime.now().isoformat(),
                  "model_object" : pickle.dumps(test_model).hex(),
-                 "train_timestamp" : dt.datetime.now().isoformat() }
+                 "train_timestamp" : dt.datetime.now().isoformat(),
+                 "deployment_stage" : "testing"
+        }
 
         response = requests.post(self.get_url(),
                             json=obj1)
@@ -126,12 +138,21 @@ class TrainedModelTests(unittest.TestCase):
 
         model_id = json_response["model_id"]
         
-        active_interval = {
-            "active_from" : dt.datetime.now().isoformat()
+        patch = {
+            "deployment_stage" : "production"
         }
         
-        url = os.path.join(self.get_url(), str(model_id), "active_interval")
-        response = requests.put(url, json=active_interval)
+        url = os.path.join(self.get_url(), str(model_id))
+        response = requests.patch(url, json=patch)
+
+        self.assertEqual(response.status_code, 200)
+        
+        patch = {
+            "deployment_stage" : "retired"
+        }
+        
+        url = os.path.join(self.get_url(), str(model_id))
+        response = requests.patch(url, json=patch)
 
         self.assertEqual(response.status_code, 200)
 

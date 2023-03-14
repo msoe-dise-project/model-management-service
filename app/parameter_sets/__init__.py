@@ -8,8 +8,8 @@ from flask.json import jsonify
 import psycopg2
 
 from app.database import get_database_uri
+from app.schemas import ParameterSetPatchSchema
 from app.schemas import ParameterSetSchema
-from app.schemas import ActiveIntervalSchema
 
 blueprint = Blueprint("parameter_sets", __name__)
 
@@ -22,12 +22,10 @@ def create_parameter_set():
     uri = get_database_uri()
     with psycopg2.connect(uri) as conn:
         with conn.cursor() as cur:
-            cur.execute('INSERT INTO parameter_sets (project_id, training_parameters, minimum_software_version, active_from, active_until) VALUES (%s, %s, %s, %s, %s) RETURNING parameter_set_id',
+            cur.execute('INSERT INTO parameter_sets (project_id, training_parameters, is_active) VALUES (%s, %s, %s) RETURNING parameter_set_id',
                         (trained_model.project_id,
                          trained_model.training_parameters,
-                         trained_model.minimum_software_version,
-                         trained_model.active_from,
-                         trained_model.active_until))
+                         trained_model.is_active))
 
             parameter_set_id = cur.fetchone()[0]
 
@@ -40,18 +38,16 @@ def list_parameter_sets():
     uri = get_database_uri()
     with psycopg2.connect(uri) as conn:
         with conn.cursor() as cur:
-            cur.execute('SELECT parameter_set_id, project_id, training_parameters, minimum_software_version, active_from, active_until FROM parameter_sets')
+            cur.execute('SELECT parameter_set_id, project_id, training_parameters, is_active FROM parameter_sets')
 
             parameter_sets = []
-            for parameter_set_id, project_id, params, min_version, active_from, active_until in cur:
+            for parameter_set_id, project_id, params, is_active in cur:
                 parameter_sets.append(
                     {
                         "parameter_set_id" : parameter_set_id,
                         "project_id" : project_id,
                         "training_parameters" : params,
-                        "minimum_software_version" : min_version,
-                        "active_from" : None if active_from is None else active_from.isoformat(),
-                        "active_until" : None if active_until is None else active_until.isoformat()
+                        "is_active" : is_active
                     })
 
     return jsonify({ "parameter_sets" : parameter_sets })
@@ -61,36 +57,28 @@ def get_parameter_set(parameter_set_id):
     uri = get_database_uri()
     with psycopg2.connect(uri) as conn:
         with conn.cursor() as cur:
-            cur.execute('SELECT parameter_set_id, project_id, training_parameters, minimum_software_version, active_from, active_until FROM parameter_sets WHERE parameter_set_id = %s',
+            cur.execute('SELECT parameter_set_id, project_id, training_parameters, is_active FROM parameter_sets WHERE parameter_set_id = %s',
                         (parameter_set_id,))
 
-            params_id, project_id, params, min_version, active_from, active_until = cur.fetchone()
+            params_id, project_id, params, is_active = cur.fetchone()
 
             obj = { "parameter_set_id" : params_id,
                     "project_id" : project_id,
                     "training_parameters" : params,
-                    "minimum_software_version" : min_version,
-                    "active_from" : None if active_from is None else active_from.isoformat(),
-                    "active_until" : None if active_until is None else active_until.isoformat() }
+                    "is_active" : is_active
+            }
 
     return jsonify(obj)
 
-@blueprint.route('/v1/parameter_sets/<int:parameter_set_id>/active_interval', methods=["PUT"])
-def update_parameter_set_active_interval(parameter_set_id):
-    active_interval = ActiveIntervalSchema().load(request.get_json())
-    
-    if active_interval.active_until is not None and active_interval.active_from is None:
-        return jsonify({ "error" : "If an end date is specified, a start date must also be specified"}), 400
-        
-    if active_interval.active_from >= active_interval.active_until:
-        return jsonify({ "error" : "The start date must be strictly before the end date."}), 400
+@blueprint.route('/v1/parameter_sets/<int:parameter_set_id>', methods=["PATCH"])
+def update_parameter_set_status(parameter_set_id):
+    patch = ParameterSetPatchSchema().load(request.get_json())
 
     uri = get_database_uri()
     with psycopg2.connect(uri) as conn:
         with conn.cursor() as cur:
-            cur.execute('UPDATE parameter_sets SET active_from = %s, active_until = %s WHERE parameter_set_id = %s RETURNING parameter_set_id',
-                        (active_interval.active_from,
-                         active_interval.active_until,
+            cur.execute('UPDATE parameter_sets SET is_active = %s WHERE parameter_set_id = %s RETURNING parameter_set_id',
+                        (patch.is_active,
                          parameter_set_id))
 
             parameter_set_id = cur.fetchone()[0]
@@ -99,6 +87,5 @@ def update_parameter_set_active_interval(parameter_set_id):
 
     return jsonify({
         "parameter_set_id" : parameter_set_id,
-        "active_from" : None if active_interval.active_from is None else active_interval.active_from.isoformat(),
-        "active_until" : None if active_interval.active_until is None else active_interval.active_until.isoformat()
+        "is_active" : patch.is_active
     })
