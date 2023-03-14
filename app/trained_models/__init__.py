@@ -36,7 +36,8 @@ def create_trained_model():
 
             model_id = cur.fetchone()[0]
 
-        conn.commit()
+    conn.commit()
+    conn.close()
 
     return jsonify({"model_id" : model_id})
     
@@ -58,6 +59,8 @@ def list_models():
                         "training_data_end" : data_end.isoformat(),
                         "deployment_stage" : deployment_stage
                     })
+    
+    conn.close()
 
     return jsonify({ "trained_models" : models })
     
@@ -81,6 +84,8 @@ def get_model_by_id(model_id):
                         "train_timestamp" : train_timestamp.isoformat(),
                         "deployment_stage" : deployment_stage
                     }
+    
+    conn.close()
 
     return jsonify(model)
 
@@ -101,6 +106,8 @@ def update_trained_model(model_id):
 
             model_id = cur.fetchone()[0]
 
-        conn.commit()
+    conn.commit()
+    
+    conn.close()
 
     return jsonify({ "model_id" : model_id, "is_active" : patch.deployment_stage })
