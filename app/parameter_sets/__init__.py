@@ -29,7 +29,8 @@ def create_parameter_set():
 
             parameter_set_id = cur.fetchone()[0]
 
-            conn.commit()
+    conn.commit()
+    conn.close()
 
     return jsonify({"parameter_set_id" : parameter_set_id})
     
@@ -49,6 +50,8 @@ def list_parameter_sets():
                         "training_parameters" : params,
                         "is_active" : is_active
                     })
+    
+    conn.close()
 
     return jsonify({ "parameter_sets" : parameter_sets })
 
@@ -67,6 +70,8 @@ def get_parameter_set(parameter_set_id):
                     "training_parameters" : params,
                     "is_active" : is_active
             }
+    
+    conn.close()
 
     return jsonify(obj)
 
@@ -83,7 +88,8 @@ def update_parameter_set_status(parameter_set_id):
 
             parameter_set_id = cur.fetchone()[0]
 
-            conn.commit()
+    conn.commit()
+    conn.close()
 
     return jsonify({
         "parameter_set_id" : parameter_set_id,

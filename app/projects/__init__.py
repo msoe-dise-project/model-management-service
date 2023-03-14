@@ -26,7 +26,8 @@ def create_project():
 
             project_id = cur.fetchone()[0]
 
-            conn.commit()
+    conn.commit()
+    conn.close()
 
     return jsonify({"project_id" : project_id})
     
@@ -46,7 +47,8 @@ def list_projects():
                 
                 projects.append(project)
 
-            conn.commit()
+    conn.commit()
+    conn.close()
 
     return jsonify({"projects" : projects})
     
@@ -66,6 +68,7 @@ def get_project(project_id):
                 "project_name" : _name
             }
 
-            conn.commit()
+    conn.commit()
+    conn.close()
 
     return jsonify(project)

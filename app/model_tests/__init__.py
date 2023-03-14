@@ -56,6 +56,7 @@ def list_models():
                         "test_metrics" : test_metrics,
                         "passed_testing" : passed_testing
                     })
+    conn.close()
 
     return jsonify({ "model_tests" : tests })
     
@@ -78,5 +79,6 @@ def get_model_by_id(test_id):
                         "test_metrics" : test_metrics,
                         "passed_testing" : passed_testing
                     }
+    conn.close()
 
     return jsonify(test)
