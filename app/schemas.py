@@ -1,4 +1,11 @@
-from marshmallow import Schema, fields, post_load
+from marshmallow import fields
+from marshmallow import post_load
+from marshmallow import Schema
+
+# import this so it can be imported from this module
+# by users of this module.  this avoids other modules
+# directly depending on marshmallow
+from marshmallow import ValidationError
 
 class Project:
     def __init__(self, project_name, project_id=None):

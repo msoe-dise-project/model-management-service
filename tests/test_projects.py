@@ -25,6 +25,14 @@ class ProjectsTests(unittest.TestCase):
         self.assertIn("project_id", json_response)
         self.assertIsInstance(json_response["project_id"], int)
         
+    def test_create_invalid_object(self):
+        obj = { "this is a test" : "test" }
+
+        response = requests.post(self.get_url(),
+                            json=obj)
+
+        self.assertEqual(response.status_code, 400)
+        
     def test_list_projects(self):
         response = requests.get(self.get_url())
         

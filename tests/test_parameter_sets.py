@@ -28,6 +28,16 @@ class ParameterSetsTests(unittest.TestCase):
         self.assertIn("parameter_set_id", json_response)
         self.assertIsInstance(json_response["parameter_set_id"], int)
         
+    def test_create_bad_schema(self):
+        obj = { "this is a test" : 5,
+                "and another test" : json.dumps({ "param1" : 1, "param2" : "2" }),
+                "test" : True }
+
+        response = requests.post(self.get_url(),
+                            json=obj)
+
+        self.assertEqual(response.status_code, 400)
+        
     def test_list_params(self):
         param_ids = set()
         
@@ -177,6 +187,28 @@ class ParameterSetsTests(unittest.TestCase):
         self.assertIn("parameter_set_id", json_response2)
         self.assertEqual(json_response["parameter_set_id"], json_response2["parameter_set_id"])
         self.assertFalse(json_response2["is_active"])
+        
+    def test_update_status_bad_schema(self):
+        obj = { "project_id" : 5,
+                "training_parameters" : json.dumps({ "param1" : 1, "param2" : "2" }),
+                "is_active" : False
+        }
+
+        response = requests.post(self.get_url(),
+                                 json=obj)
+
+        self.assertEqual(response.status_code, 200)
+
+        json_response = response.json()
+
+        url = os.path.join(self.get_url(),
+                           str(json_response["parameter_set_id"]))
+        
+        update = { "this is a test" : True }
+        
+        response = requests.patch(url, json=update)
+
+        self.assertEqual(response.status_code, 400)
 
 if __name__ == "__main__":
     if BASE_URL_KEY not in os.environ:

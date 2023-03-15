@@ -11,12 +11,16 @@ from psycopg2.extras import Json
 from app.database import get_database_uri
 from app.schemas import TrainedModelPatchSchema
 from app.schemas import TrainedModelSchema
+from app.schemas import ValidationError
 
 blueprint = Blueprint("trained_models", __name__)
 
 @blueprint.route('/v1/trained_models', methods=["POST"])
 def create_trained_model():
-    trained_model = TrainedModelSchema().load(request.get_json())
+    try:
+        trained_model = TrainedModelSchema().load(request.get_json())
+    except ValidationError as err:
+        return jsonify(err.messages), 400
 
     uri = get_database_uri()
     with psycopg2.connect(uri) as conn:
@@ -91,7 +95,10 @@ def get_model_by_id(model_id):
 
 @blueprint.route('/v1/trained_models/<int:model_id>', methods=["PATCH"])
 def update_trained_model(model_id):
-    patch = TrainedModelPatchSchema().load(request.get_json())
+    try:
+        patch = TrainedModelPatchSchema().load(request.get_json())
+    except ValidationError as err:
+        return jsonify(err.messages), 400
 
     uri = get_database_uri()
     with psycopg2.connect(uri) as conn:

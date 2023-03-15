@@ -10,14 +10,17 @@ import psycopg2
 from app.database import get_database_uri
 from app.schemas import ParameterSetPatchSchema
 from app.schemas import ParameterSetSchema
+from app.schemas import ValidationError
 
 blueprint = Blueprint("parameter_sets", __name__)
 
 @blueprint.route('/v1/parameter_sets', methods=["POST"])
 def create_parameter_set():
-    record = request.get_json()
-
-    trained_model = ParameterSetSchema().load(record)
+    try:
+        record = request.get_json()
+        trained_model = ParameterSetSchema().load(record)
+    except ValidationError as err:
+        return jsonify(err.messages), 400
 
     uri = get_database_uri()
     with psycopg2.connect(uri) as conn:
@@ -77,7 +80,10 @@ def get_parameter_set(parameter_set_id):
 
 @blueprint.route('/v1/parameter_sets/<int:parameter_set_id>', methods=["PATCH"])
 def update_parameter_set_status(parameter_set_id):
-    patch = ParameterSetPatchSchema().load(request.get_json())
+    try:
+        patch = ParameterSetPatchSchema().load(request.get_json())
+    except ValidationError as err:
+        return jsonify(err.messages), 400
 
     uri = get_database_uri()
     with psycopg2.connect(uri) as conn:

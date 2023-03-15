@@ -35,6 +35,23 @@ class TrainedModelTests(unittest.TestCase):
         self.assertIn("model_id", json_response)
         self.assertIsInstance(json_response["model_id"], int)
         
+    def test_create_success_bad_schema(self):
+        test_model = set([1, 3, 5])
+        
+        obj = { "not_a_project_id" : 5,
+                "what's a parameter set?" : 1,
+                "training_data_from" : "last year",
+                "training_data_until" : "last month",
+                "model_object" : pickle.dumps(test_model).hex(),
+                "train_timestamp" : "today",
+                "deployment_stage" : "testing"
+        }
+
+        response = requests.post(self.get_url(),
+                            json=obj)
+
+        self.assertEqual(response.status_code, 400)
+        
     def test_list_models(self):
         test_model1 = set([1, 3, 5])
         
@@ -118,7 +135,7 @@ class TrainedModelTests(unittest.TestCase):
         unpickled_model = pickle.loads(bytes.fromhex(json_response["model_object"]))
         self.assertEqual(test_model, unpickled_model)
         
-    def test_model_status(self):
+    def test_model_status_update(self):
         test_model = set([5, 21, 13])
         obj1 = { "project_id" : 5,
                  "parameter_set_id" : 49,
@@ -155,6 +172,35 @@ class TrainedModelTests(unittest.TestCase):
         response = requests.patch(url, json=patch)
 
         self.assertEqual(response.status_code, 200)
+        
+    def test_model_status_update_bad_schema(self):
+        test_model = set([5, 21, 13])
+        obj1 = { "project_id" : 5,
+                 "parameter_set_id" : 49,
+                 "training_data_from" : (dt.datetime.now() - dt.timedelta(days=3)).isoformat(),
+                 "training_data_until" : dt.datetime.now().isoformat(),
+                 "model_object" : pickle.dumps(test_model).hex(),
+                 "train_timestamp" : dt.datetime.now().isoformat(),
+                 "deployment_stage" : "testing"
+        }
+
+        response = requests.post(self.get_url(),
+                            json=obj1)
+
+        self.assertEqual(response.status_code, 200)
+
+        json_response = response.json()
+
+        model_id = json_response["model_id"]
+        
+        patch = {
+            "not a valid field" : "production"
+        }
+        
+        url = os.path.join(self.get_url(), str(model_id))
+        response = requests.patch(url, json=patch)
+
+        self.assertEqual(response.status_code, 400)
 
 if __name__ == "__main__":
     if BASE_URL_KEY not in os.environ:
