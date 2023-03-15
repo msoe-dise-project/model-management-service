@@ -35,7 +35,7 @@ def create_parameter_set():
     conn.commit()
     conn.close()
 
-    return jsonify({"parameter_set_id" : parameter_set_id})
+    return jsonify({"parameter_set_id" : parameter_set_id}), 201
     
 @blueprint.route('/v1/parameter_sets', methods=["GET"])
 def list_parameter_sets():

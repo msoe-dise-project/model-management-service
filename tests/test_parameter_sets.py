@@ -21,7 +21,7 @@ class ParameterSetsTests(unittest.TestCase):
         response = requests.post(self.get_url(),
                             json=obj)
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 201)
 
         json_response = response.json()
 
@@ -48,7 +48,7 @@ class ParameterSetsTests(unittest.TestCase):
         response = requests.post(self.get_url(),
                             json=obj)
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 201)
 
         json_response = response.json()
 
@@ -62,7 +62,7 @@ class ParameterSetsTests(unittest.TestCase):
         response = requests.post(self.get_url(),
                             json=obj)
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 201)
 
         json_response = response.json()
 
@@ -76,7 +76,7 @@ class ParameterSetsTests(unittest.TestCase):
         response = requests.post(self.get_url(),
                             json=obj)
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 201)
 
         json_response = response.json()
 
@@ -103,7 +103,7 @@ class ParameterSetsTests(unittest.TestCase):
         response = requests.post(self.get_url(),
                             json=obj)
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 201)
 
         json_response = response.json()
 
@@ -131,7 +131,7 @@ class ParameterSetsTests(unittest.TestCase):
         response = requests.post(self.get_url(),
                             json=obj)
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 201)
 
         json_response = response.json()
 
@@ -159,7 +159,7 @@ class ParameterSetsTests(unittest.TestCase):
         response = requests.post(self.get_url(),
                                  json=obj)
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 201)
 
         json_response = response.json()
 
@@ -197,7 +197,7 @@ class ParameterSetsTests(unittest.TestCase):
         response = requests.post(self.get_url(),
                                  json=obj)
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 201)
 
         json_response = response.json()
 

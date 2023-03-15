@@ -28,7 +28,7 @@ class ModelTestsTests(unittest.TestCase):
         response = requests.post(self.get_url(),
                             json=obj)
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 201)
 
         json_response = response.json()
 
@@ -65,7 +65,7 @@ class ModelTestsTests(unittest.TestCase):
         response = requests.post(self.get_url(),
                             json=obj1)
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 201)
 
         obj2 = {
                 "project_id" : 5,
@@ -79,7 +79,7 @@ class ModelTestsTests(unittest.TestCase):
         response = requests.post(self.get_url(),
                             json=obj2)
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 201)
 
         obj3 = {
                 "project_id" : 5,
@@ -93,7 +93,7 @@ class ModelTestsTests(unittest.TestCase):
         response = requests.post(self.get_url(),
                             json=obj3)
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 201)
 
         response = requests.get(self.get_url())
         self.assertEqual(response.status_code, 200)
@@ -115,7 +115,7 @@ class ModelTestsTests(unittest.TestCase):
         response = requests.post(self.get_url(),
                             json=obj1)
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 201)
 
         json_response = response.json()
 

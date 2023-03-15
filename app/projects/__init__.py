@@ -33,7 +33,7 @@ def create_project():
     conn.commit()
     conn.close()
 
-    return jsonify({"project_id" : project_id})
+    return jsonify({"project_id" : project_id}), 201
     
 @blueprint.route('/v1/projects', methods=["GET"])
 def list_projects():

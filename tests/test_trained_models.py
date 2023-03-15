@@ -28,7 +28,7 @@ class TrainedModelTests(unittest.TestCase):
         response = requests.post(self.get_url(),
                             json=obj)
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 201)
 
         json_response = response.json()
 
@@ -67,7 +67,7 @@ class TrainedModelTests(unittest.TestCase):
         response = requests.post(self.get_url(),
                             json=obj1)
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 201)
 
         test_model2 = set([5, 21, 13])
         obj2 = { "project_id" : 5,
@@ -82,7 +82,7 @@ class TrainedModelTests(unittest.TestCase):
         response = requests.post(self.get_url(),
                             json=obj2)
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 201)
 
         test_model3 = set([5, 21, 13])
         obj3 = { "project_id" : 5,
@@ -97,7 +97,7 @@ class TrainedModelTests(unittest.TestCase):
         response = requests.post(self.get_url(),
                             json=obj3)
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 201)
 
         response = requests.get(self.get_url())
         self.assertEqual(response.status_code, 200)
@@ -120,7 +120,7 @@ class TrainedModelTests(unittest.TestCase):
         response = requests.post(self.get_url(),
                             json=obj1)
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 201)
 
         json_response = response.json()
 
@@ -149,7 +149,7 @@ class TrainedModelTests(unittest.TestCase):
         response = requests.post(self.get_url(),
                             json=obj1)
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 201)
 
         json_response = response.json()
 
@@ -187,7 +187,7 @@ class TrainedModelTests(unittest.TestCase):
         response = requests.post(self.get_url(),
                             json=obj1)
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 201)
 
         json_response = response.json()
 

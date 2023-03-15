@@ -39,7 +39,7 @@ def create_trained_model():
 
         conn.commit()
 
-    return jsonify({"test_id" : test_id})
+    return jsonify({"test_id" : test_id}), 201
     
 @blueprint.route('/v1/model_tests', methods=["GET"])
 def list_models():
