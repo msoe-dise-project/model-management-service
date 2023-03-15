@@ -9,12 +9,16 @@ import psycopg2
 
 from app.database import get_database_uri
 from app.schemas import ModelTestSchema
+from app.schemas import ValidationError
 
 blueprint = Blueprint("model_tests", __name__)
 
 @blueprint.route('/v1/model_tests', methods=["POST"])
 def create_trained_model():
-    model_test = ModelTestSchema().load(request.get_json())
+    try:
+        model_test = ModelTestSchema().load(request.get_json())
+    except ValidationError as err:
+        return jsonify(err.messages), 400
 
     uri = get_database_uri()
     with psycopg2.connect(uri) as conn:

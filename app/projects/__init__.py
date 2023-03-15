@@ -10,13 +10,17 @@ from psycopg2.extras import Json
 
 from app.database import get_database_uri
 from app.schemas import ProjectSchema
+from app.schemas import ValidationError
 
 blueprint = Blueprint("projects", __name__)
 
 @blueprint.route('/v1/projects', methods=["POST"])
 def create_project():
-    record = request.get_json()
-    project = ProjectSchema().load(record)
+    try:
+        record = request.get_json()
+        project = ProjectSchema().load(record)
+    except ValidationError as err:
+        return jsonify(err.messages), 400
 
     uri = get_database_uri()
     with psycopg2.connect(uri) as conn:

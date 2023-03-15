@@ -35,6 +35,23 @@ class ModelTestsTests(unittest.TestCase):
         self.assertIn("test_id", json_response)
         self.assertIsInstance(json_response["test_id"], int)
         
+    def test_create_success_bad_schema(self):
+        test_model = set([1, 3, 5])
+        
+        obj = {
+                "not_a_project_id" : 5,
+                "bad parameters" : 1,
+                "oops" : 2,
+                "test_timestamp" : "today",
+                "test_metrics" : json.dumps({ "recall" : 0.8, "precision" : 0.2 }),
+                "passed_testing" : None
+              }
+
+        response = requests.post(self.get_url(),
+                            json=obj)
+
+        self.assertEqual(response.status_code, 400)
+        
     def test_list_tests(self):
         obj1 = {
                 "project_id" : 5,
