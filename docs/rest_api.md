@@ -94,4 +94,10 @@ GET /model_tests/{modelId}
 
 > Get a model test results by Id
 
+## Healthcheck
+
+* [Perform healthcheck](healthcheck/get.md) : `GET /healthcheck`
+
+The file system layout and endpoint templates follow the examples provided by [@iros](https://gist.github.com/iros/3426278) and [@jamescooke](https://github.com/jamescooke/restapidocs).
+
 	
