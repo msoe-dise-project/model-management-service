@@ -47,7 +47,7 @@ Creates a parameter set and assigns a unique id.
 
 ```json
 {
-    "model\_id": 123
+    "model_id": 123
 }
 ```
 

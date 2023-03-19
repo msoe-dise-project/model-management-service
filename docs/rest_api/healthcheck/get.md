@@ -32,7 +32,7 @@ Checks that the application can access the database and the tables exist.
             
             "tables" :
             {
-                "healthy" : True,
+                "healthy" : true,
                 "successful_queries" : ["model_tests", "parameter_sets", "projects", "trained_models"]
             }    
         }
