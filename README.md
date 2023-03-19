@@ -8,7 +8,7 @@ The model management service is responsible for two things:
 ## Documentation
 
 * [Database Schema](docs/database_schema.md)
-* [REST API](docs/rest_api.md)
+* [REST API](docs/rest_api/README.md)
 
 
 	

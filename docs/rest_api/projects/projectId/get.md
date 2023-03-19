@@ -21,13 +21,13 @@ Access a single project
 
 ```json
 {
-		"project_name" : "Fraud Detection",
-		"project_id" : 1
+	"project_name" : "Fraud Detection",
+	"project_id" : 1
 }
 ```
 
 ## Error Response
 
-**Condition** : If no todo item is found with that id
+**Condition** : If no project with that id was found
 
 **Code** : `404 Not Found`

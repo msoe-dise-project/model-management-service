@@ -12,17 +12,17 @@ Creates a project and assigns a unique id.
 **Data constraints** : Expects a JSON payload with a single field ("project_name") with a string value.
 
 ```json
-	{
-			"project_name" : "string"
-	}
+{
+		"project_name" : "string"
+}
 ```
 
 **Data examples**:
 
 ```json
-	{
-		"project_name" : "Fraudulant Transaction Detector"
-	}
+{
+	"project_name" : "Fraudulant Transaction Detector"
+}
 ```
 
 ## Success Response
