@@ -1,7 +1,7 @@
 # List All Parameter Ssets
 Lists all parameter sets.
 
-**URL** : `/v1/paramet_sets`
+**URL** : `/v1/parameter_sets`
 
 **Method** : `GET`
 

@@ -1,5 +1,5 @@
 # Get Parameter Set by Id
-Access a single prameter set
+Access a single parameter set
 
 **URL** : `/v1/parameter_sets/:parameterSetId`
 
@@ -33,6 +33,6 @@ Access a single prameter set
 
 ## Error Response
 
-**Condition** : If no parameter set was found with that id
+**Condition** : If no parameter set with that id was found
 
 **Code** : `404 Not Found`

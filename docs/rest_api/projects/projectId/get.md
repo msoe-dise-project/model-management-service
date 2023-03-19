@@ -28,6 +28,6 @@ Access a single project
 
 ## Error Response
 
-**Condition** : If no project was found with that id
+**Condition** : If no project with that id was found
 
 **Code** : `404 Not Found`

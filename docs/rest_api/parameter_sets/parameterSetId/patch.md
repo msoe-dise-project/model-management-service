@@ -1,9 +1,9 @@
 # Change Parameter Set Active Status
-Change active status of a parameter set.
+Change the actives status of a parameter set.
 
 **URL** : `/v1/parameter_sets/:parameterSetId`
 
-**Method** : `GET`
+**Method** : `PATCH`
 
 **Auth required** : NO
 
@@ -42,7 +42,7 @@ Change active status of a parameter set.
 
 ## Error Response
 
-**Condition** : If no parameter set was found with that id
+**Condition** : If no parameter set with that id was found
 
 **Code** : `404 Not Found`
 
