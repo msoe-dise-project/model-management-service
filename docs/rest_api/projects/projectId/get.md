@@ -21,8 +21,8 @@ Access a single project
 
 ```json
 {
-		"project_name" : "Fraud Detection",
-		"project_id" : 1
+	"project_name" : "Fraud Detection",
+	"project_id" : 1
 }
 ```
 
