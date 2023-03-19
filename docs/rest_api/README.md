@@ -20,3 +20,9 @@
 * [Get trained model by id](trained_models/modelId/get.md) : `GET /v1/trained_models/:modelId`
 * [Update deployment stage of a trained model](trained_models/modelId/patch.md) : `PATCH /v1/trained_models/:modelId`
 
+## Model Tests-Related
+
+* [Create a model test](model_tests/post.md) : `POST /v1/model_tests`
+* [List model tests](model_tests/get.md) : `GET /v1/model_tests`
+* [Get model test by id](model_tests/testId/get.md) : `GET /v1/model_tests/:testId`
+
