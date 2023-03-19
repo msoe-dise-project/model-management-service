@@ -1,6 +1,5 @@
 import argparse
 import datetime as dt
-import json
 import os
 import sys
 import unittest
@@ -15,7 +14,7 @@ class ParameterSetsTests(unittest.TestCase):
 
     def test_create_success(self):
         obj = { "project_id" : 5,
-                "training_parameters" : json.dumps({ "param1" : 1, "param2" : "2" }),
+                "training_parameters" : { "param1" : 1, "param2" : "2" },
                 "is_active" : True }
 
         response = requests.post(self.get_url(),
@@ -30,7 +29,7 @@ class ParameterSetsTests(unittest.TestCase):
         
     def test_create_bad_schema(self):
         obj = { "this is a test" : 5,
-                "and another test" : json.dumps({ "param1" : 1, "param2" : "2" }),
+                "and another test" : { "param1" : 1, "param2" : "2" },
                 "test" : True }
 
         response = requests.post(self.get_url(),
@@ -42,7 +41,7 @@ class ParameterSetsTests(unittest.TestCase):
         param_ids = set()
         
         obj = { "project_id" : 5,
-                "training_parameters" : json.dumps({ "param1" : 1, "param2" : "2" }),
+                "training_parameters" : { "param1" : 1, "param2" : "2" },
                 "is_active" : True }
                 
         response = requests.post(self.get_url(),
@@ -55,7 +54,7 @@ class ParameterSetsTests(unittest.TestCase):
         param_ids.add(json_response["parameter_set_id"])
                 
         obj = { "project_id" : 6,
-                "training_parameters" : json.dumps({ "param1" : 1, "param2" : "2" }),
+                "training_parameters" : { "param1" : 1, "param2" : "2" },
                 "is_active" : True
         }
                 
@@ -69,7 +68,7 @@ class ParameterSetsTests(unittest.TestCase):
         param_ids.add(json_response["parameter_set_id"])
                 
         obj = { "project_id" : 7,
-                "training_parameters" : json.dumps({ "param1" : 1, "param2" : "2" }),
+                "training_parameters" : { "param1" : 1, "param2" : "2" },
                 "is_active" : False
         }
                 
@@ -96,7 +95,7 @@ class ParameterSetsTests(unittest.TestCase):
     
     def test_get_by_id(self):
         obj = { "project_id" : 5,
-                "training_parameters" : json.dumps({ "param1" : 1, "param2" : "2" }),
+                "training_parameters" : { "param1" : 1, "param2" : "2" },
                 "is_active" : False
         }
 
@@ -124,7 +123,7 @@ class ParameterSetsTests(unittest.TestCase):
         
     def test_get_by_id_no_end(self):
         obj = { "project_id" : 5,
-                "training_parameters" : json.dumps({ "param1" : 1, "param2" : "2" }),
+                "training_parameters" : { "param1" : 1, "param2" : "2" },
                 "is_active" : True
         }
 
@@ -152,7 +151,7 @@ class ParameterSetsTests(unittest.TestCase):
         
     def test_update_status(self):
         obj = { "project_id" : 5,
-                "training_parameters" : json.dumps({ "param1" : 1, "param2" : "2" }),
+                "training_parameters" : { "param1" : 1, "param2" : "2" },
                 "is_active" : False
         }
 
@@ -190,7 +189,7 @@ class ParameterSetsTests(unittest.TestCase):
         
     def test_update_status_bad_schema(self):
         obj = { "project_id" : 5,
-                "training_parameters" : json.dumps({ "param1" : 1, "param2" : "2" }),
+                "training_parameters" : { "param1" : 1, "param2" : "2" },
                 "is_active" : False
         }
 

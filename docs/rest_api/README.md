@@ -26,3 +26,8 @@
 * [List model tests](model_tests/get.md) : `GET /v1/model_tests`
 * [Get model test by id](model_tests/testId/get.md) : `GET /v1/model_tests/:testId`
 
+## Health Check-Related
+
+* [Perform health check](healthcheck/get.md) : `GET /healthcheck`
+
+The file system layout and endpoint templates follow the examples provided by [@iros](https://gist.github.com/iros/3426278) and [@jamescooke](https://github.com/jamescooke/restapidocs).
