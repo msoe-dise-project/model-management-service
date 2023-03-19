@@ -59,6 +59,6 @@ Creates a model test and assigns a unique id.
 
 ```json
 {
-    "error": "The test\_metrics field is required."
+    "error": "The test_metrics field is required."
 }
 ```
