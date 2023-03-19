@@ -59,7 +59,7 @@ class ProjectSchema(Schema):
 class ParameterSetSchema(Schema):
     project_id = fields.Integer(required=True)
     parameter_set_id = fields.Integer()
-    training_parameters = fields.String(required=True)
+    training_parameters = fields.Raw(required=True)
     is_active = fields.Boolean(required=True)
     
     @post_load
