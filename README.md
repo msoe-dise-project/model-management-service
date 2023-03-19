@@ -1,9 +1,10 @@
 # Model Management Service
 
-The model management service is responsible for two things:
+The model management service is responsible for tracking:
 
-1. Tracking model training parameters
-1. Tracking trained models
+1. Model training parameters
+1. Trained models
+1. Model test results
 
 ## Documentation
 
