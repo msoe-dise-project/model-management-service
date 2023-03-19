@@ -27,7 +27,7 @@ Access a single model test.
 	"test_id" : 1,
 	"test_timestamp" : "2023-03-18T21:00:07.274173",
 	"test_metrics" : { "precision" : 0.97, "recall" : 0.95 },
-	"passed_testing" : True
+	"passed_testing" : true
 }
 ```
 

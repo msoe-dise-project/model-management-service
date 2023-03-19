@@ -23,11 +23,11 @@ Checks that the application can access the database and the tables exist.
     {
         "database" :
         {
-            "healthy" : True,
+            "healthy" : true,
             
             "connection" :
             {
-                "healthy" : True
+                "healthy" : true
             },
             
             "tables" :
@@ -51,16 +51,16 @@ Checks that the application can access the database and the tables exist.
     {
         "database" :
         {
-            "healthy" : True,
+            "healthy" : true,
             
             "connection" :
             {
-                "healthy" : False
+                "healthy" : false
             },
             
             "tables" :
             {
-                "healthy" : False,
+                "healthy" : false,
                 "successful_queries" : []
             }    
         }
@@ -73,16 +73,16 @@ OR
     {
         "database" :
         {
-            "healthy" : True,
+            "healthy" : true,
             
             "connection" :
             {
-                "healthy" : True
+                "healthy" : true
             },
             
             "tables" :
             {
-                "healthy" : False,
+                "healthy" : false,
                 "successful_queries" : ["model_tests", "projects"]
             }    
         }

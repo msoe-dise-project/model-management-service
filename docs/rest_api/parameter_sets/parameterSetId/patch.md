@@ -21,7 +21,7 @@ Change the actives status of a parameter set.
 
 ```json
 {
-	"is_active" : True
+	"is_active" : true
 }
 ```
 
@@ -36,7 +36,7 @@ Change the actives status of a parameter set.
 ```json
 {
 		"parameter_set_id" : 1,
-		"is_active" : True
+		"is_active" : true
 }
 ```
 

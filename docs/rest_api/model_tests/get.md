@@ -29,7 +29,7 @@ Lists all model tests.
 			"test_id" : 1,
 			"test_timestamp" : "2023-03-18T21:00:07.274173",
 			"test_metrics" : { "precision" : 0.97, "recall" : 0.95 },
-			"passed_testing" : True
+			"passed_testing" : true
 		},
 		{
 			"project_id" : 1,
@@ -38,7 +38,7 @@ Lists all model tests.
 			"test_id" : 2,
 			"test_timestamp" : "2023-03-18T21:00:07.274173",
 			"test_metrics" : { "precision" : 0.65, "recall" : 0.36 },
-			"passed_testing" : False
+			"passed_testing" : false
 		},
 		{
 			"project_id" : 1,
@@ -47,7 +47,7 @@ Lists all model tests.
 			"test_id" : 3,
 			"test_timestamp" : "2023-03-18T21:00:07.274173",
 			"test_metrics" : { "precision" : 0.84, "recall" : 0.97 },
-			"passed_testing" : True
+			"passed_testing" : true
 		}
 	 ]
 }

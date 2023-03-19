@@ -27,7 +27,7 @@ Access a single parameter set
 		"model" : { "model_type" : "RandomForestClassifier", "n_estimators" : 100 },
 		"scaler" : { "type" : "StandardScaler", "with_mean" : True }
 	},
-	"is_active" : False
+	"is_active" : false
 }
 ```
 
