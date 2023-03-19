@@ -61,6 +61,6 @@ Creates a parameter set and assigns a unique id.
 
 ```json
 {
-    "error": "The model\_object field is required."
+    "error": "The model_object field is required."
 }
 ```

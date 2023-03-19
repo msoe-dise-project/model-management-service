@@ -49,6 +49,6 @@ Creates a project and assigns a unique id.
 
 ```json
 {
-    "error": "The project\_name field is required."
+    "error": "The project_name field is required."
 }
 ```

@@ -26,7 +26,7 @@ Creates a parameter set and assigns a unique id.
 	"parameter_set_id" : 1,
 	"training_parameters" : {
 		"model" : { "model_type" : "RandomForestClassifier", "n_estimators" : 100 },
-		"scaler" : { "type" : "StandardScaler", "with_mean" : True }
+		"scaler" : { "type" : "StandardScaler", "with_mean" : true }
 	},
 	"is_active" : false
 }
@@ -56,6 +56,6 @@ Creates a parameter set and assigns a unique id.
 
 ```json
 {
-    "error": "The training\_parameters field is required."
+    "error": "The training_parameters field is required."
 }
 ```

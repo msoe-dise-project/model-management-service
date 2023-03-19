@@ -25,7 +25,7 @@ Access a single parameter set
 	"parameter_set_id" : 1,
 	"training_parameters" : {
 		"model" : { "model_type" : "RandomForestClassifier", "n_estimators" : 100 },
-		"scaler" : { "type" : "StandardScaler", "with_mean" : True }
+		"scaler" : { "type" : "StandardScaler", "with_mean" : true }
 	},
 	"is_active" : false
 }

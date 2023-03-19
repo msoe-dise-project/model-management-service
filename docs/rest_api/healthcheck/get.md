@@ -1,7 +1,7 @@
 # Perform Healthcheck
 Checks that the application can access the database and the tables exist.
 
-**URL** : `healthcheck`
+**URL** : `/healthcheck`
 
 **Method** : `GET`
 
