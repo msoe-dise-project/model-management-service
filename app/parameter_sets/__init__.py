@@ -6,6 +6,7 @@ from flask import request
 from flask.json import jsonify
 
 import psycopg2
+from psycopg2.extras import Json
 
 from app.database import get_database_uri
 from app.schemas import ParameterSetPatchSchema
@@ -27,7 +28,7 @@ def create_parameter_set():
         with conn.cursor() as cur:
             cur.execute('INSERT INTO parameter_sets (project_id, training_parameters, is_active) VALUES (%s, %s, %s) RETURNING parameter_set_id',
                         (trained_model.project_id,
-                         trained_model.training_parameters,
+                         Json(trained_model.training_parameters),
                          trained_model.is_active))
 
             parameter_set_id = cur.fetchone()[0]

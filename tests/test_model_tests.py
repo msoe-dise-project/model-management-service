@@ -1,6 +1,5 @@
 import argparse
 import datetime as dt
-import json
 import os
 import sys
 import unittest
@@ -21,7 +20,7 @@ class ModelTestsTests(unittest.TestCase):
                 "parameter_set_id" : 1,
                 "model_id" : 2,
                 "test_timestamp" : dt.datetime.now().isoformat(),
-                "test_metrics" : json.dumps({ "recall" : 0.8, "precision" : 0.2 }),
+                "test_metrics" : { "recall" : 0.8, "precision" : 0.2 },
                 "passed_testing" : True
               }
 
@@ -43,7 +42,7 @@ class ModelTestsTests(unittest.TestCase):
                 "bad parameters" : 1,
                 "oops" : 2,
                 "test_timestamp" : "today",
-                "test_metrics" : json.dumps({ "recall" : 0.8, "precision" : 0.2 }),
+                "test_metrics" : { "recall" : 0.8, "precision" : 0.2 },
                 "passed_testing" : None
               }
 
@@ -58,7 +57,7 @@ class ModelTestsTests(unittest.TestCase):
                 "parameter_set_id" : 1,
                 "model_id" : 2,
                 "test_timestamp" : dt.datetime.now().isoformat(),
-                "test_metrics" : json.dumps({ "recall" : 0.8, "precision" : 0.2 }),
+                "test_metrics" : { "recall" : 0.8, "precision" : 0.2 },
                 "passed_testing" : True
               }
                  
@@ -72,7 +71,7 @@ class ModelTestsTests(unittest.TestCase):
                 "parameter_set_id" : 1,
                 "model_id" : 3,
                 "test_timestamp" : dt.datetime.now().isoformat(),
-                "test_metrics" : json.dumps({ "recall" : 0.8, "precision" : 0.2 }),
+                "test_metrics" : { "recall" : 0.8, "precision" : 0.2 },
                 "passed_testing" : True
               }
 
@@ -86,7 +85,7 @@ class ModelTestsTests(unittest.TestCase):
                 "parameter_set_id" : 1,
                 "model_id" : 53,
                 "test_timestamp" : dt.datetime.now().isoformat(),
-                "test_metrics" : json.dumps({ "recall" : 0.8, "precision" : 0.2 }),
+                "test_metrics" : { "recall" : 0.8, "precision" : 0.2 },
                 "passed_testing" : True
               }
                  
@@ -108,7 +107,7 @@ class ModelTestsTests(unittest.TestCase):
                 "parameter_set_id" : 1,
                 "model_id" : 2,
                 "test_timestamp" : dt.datetime.now().isoformat(),
-                "test_metrics" : json.dumps({ "recall" : 0.8, "precision" : 0.2 }),
+                "test_metrics" : { "recall" : 0.8, "precision" : 0.2 },
                 "passed_testing" : True
               }
 
