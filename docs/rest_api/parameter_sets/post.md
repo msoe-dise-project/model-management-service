@@ -34,7 +34,7 @@ Creates a parameter set and assigns a unique id.
 
 ## Success Response
 
-**Condition** : Project created successfully.
+**Condition** : Parameter set created successfully.
 
 **Code** : `201 CREATED`
 
