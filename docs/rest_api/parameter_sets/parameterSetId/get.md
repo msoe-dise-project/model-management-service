@@ -21,13 +21,13 @@ Access a single parameter set
 
 ```json
 {
-		"project_id" : 1,
-		"parameter_set_id" : 1,
-		"training_parameters" : {
-			"model" : { "model_type" : "RandomForestClassifier", "n_estimators" : 100 },
-			"scaler" : { "type" : "StandardScaler", "with_mean" : True }
-		},
-		"is_active" : False
+	"project_id" : 1,
+	"parameter_set_id" : 1,
+	"training_parameters" : {
+		"model" : { "model_type" : "RandomForestClassifier", "n_estimators" : 100 },
+		"scaler" : { "type" : "StandardScaler", "with_mean" : True }
+	},
+	"is_active" : False
 }
 ```
 
