@@ -13,3 +13,10 @@
 * [Get parameter set by id](parameter_sets/parameterSetId/get.md) : `GET /v1/parameter_sets/:parameterSetId`
 * [Update activity status of a parameter set](parameter_sets/parameterSetId/patch.md) : `PATCH /v1/parameter_sets/:parameterSetId`
 
+## Trained Model-Related
+
+* [Create a trained model](trained_models/post.md) : `POST /v1/trained_models`
+* [List trained models](trained_models/get.md) : `GET /v1/trained_models`
+* [Get trained model by id](trained_models/modelId/get.md) : `GET /v1/trained_models/:modelId`
+* [Update deployment stage of a trained model](trained_models/modelId/patch.md) : `PATCH /v1/trained_models/:modelId`
+
