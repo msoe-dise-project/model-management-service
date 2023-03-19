@@ -1,7 +1,7 @@
-# Create Parameter Set
+# Create Trained Model
 Creates a parameter set and assigns a unique id.
 
-**URL** : `/v1/parameter_sets`
+**URL** : `/v1/trained_models`
 
 **Method** : `POST`
 
@@ -9,13 +9,17 @@ Creates a parameter set and assigns a unique id.
 
 **Permissions required** : None
 
-**Data constraints** : Expects a JSON payload with a single field ("project_name") with a string value.
+**Data constraints** : Expects a JSON payload with the following fields.  Valid values for the deployment stage are "testing", "production", and "retired".
 
 ```json
 {
+	"project_id" : "integer",
 	"parameter_set_id" : "integer",
-	"training_parameters" : "object",
-	"is_active" : "boolean"
+	"training_data_start" : "ISO-8601 formatted string",
+	"training_data_end" : "ISO-8601 formatted string",
+	"train_timestamp" : "ISO-8601 formatted string",
+	"model_object" : "string"
+	"deployment_stage" : "string"
 }
 ```
 
@@ -23,12 +27,13 @@ Creates a parameter set and assigns a unique id.
 
 ```json
 {
+	"project_id" : 1,
 	"parameter_set_id" : 1,
-	"training_parameters" : {
-		"model" : { "model_type" : "RandomForestClassifier", "n_estimators" : 100 },
-		"scaler" : { "type" : "StandardScaler", "with_mean" : True }
-	},
-	"is_active" : False
+	"training_data_start" : "2023-03-15T21:00:34.140508",
+	"training_data_end" : "2023-03-18T21:00:07.274173",
+	"train_timestamp" : "2023-03-18T21:00:07.274173",
+	"model_object" : "abcdefabcdef..."
+	"deployment_stage" : "testing"
 }
 ```
 
@@ -42,7 +47,7 @@ Creates a parameter set and assigns a unique id.
 
 ```json
 {
-    "parameter_set_id": 123
+    "model\_id": 123
 }
 ```
 
@@ -56,6 +61,6 @@ Creates a parameter set and assigns a unique id.
 
 ```json
 {
-    "error": "The training\_parameters field is required."
+    "error": "The model\_object field is required."
 }
 ```
