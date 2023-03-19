@@ -1,4 +1,4 @@
-# List All Parameter Ssets
+# List All Parameter Sets
 Lists all parameter sets.
 
 **URL** : `/v1/parameter_sets`
@@ -27,7 +27,7 @@ Lists all parameter sets.
 			"parameter_set_id" : 1,
 			"training_parameters" : {
 				"model" : { "model_type" : "RandomForestClassifier", "n_estimators" : 100 },
-				"scaler" : { "type" : "StandardScaler", "with_mean" : True }
+				"scaler" : { "type" : "StandardScaler", "with_mean" : true }
 			},
 			"is_active" : false
 		},
@@ -36,7 +36,7 @@ Lists all parameter sets.
 			"parameter_set_id" : 2,
 			"training_parameters" : {
 				"model" : { "model_type" : "SGDClassifier", "alpha" : 0.01, "loss" : "log_loss" },
-				"scaler" : { "type" : "StandardScaler", "with_mean" : True }
+				"scaler" : { "type" : "StandardScaler", "with_mean" : true }
 			},
 			"is_active" : true
 		}
