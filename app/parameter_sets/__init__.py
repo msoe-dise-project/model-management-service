@@ -19,7 +19,7 @@ blueprint = Blueprint("parameter_sets", __name__)
 def create_parameter_set():
     try:
         record = request.get_json()
-        trained_model = ParameterSetSchema().load(record)
+        parameter_set = ParameterSetSchema().load(record)
     except ValidationError as err:
         return jsonify(err.messages), 400
 
@@ -27,9 +27,9 @@ def create_parameter_set():
     with psycopg2.connect(uri) as conn:
         with conn.cursor() as cur:
             cur.execute('INSERT INTO parameter_sets (project_id, training_parameters, is_active) VALUES (%s, %s, %s) RETURNING parameter_set_id',
-                        (trained_model.project_id,
-                         Json(trained_model.training_parameters),
-                         trained_model.is_active))
+                        (parameter_set.project_id,
+                         Json(parameter_set.training_parameters),
+                         parameter_set.is_active))
 
             parameter_set_id = cur.fetchone()[0]
 
