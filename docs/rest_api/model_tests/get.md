@@ -21,7 +21,7 @@ Lists all model tests.
 
 ```json
 {
-    "model_tests_": [
+    "model_tests": [
 	 	{
 			"project_id" : 1,
 			"parameter_set_id" : 1,
