@@ -50,19 +50,20 @@ def list_models():
     uri = get_database_uri()
     with psycopg2.connect(uri) as conn:
         with conn.cursor() as cur:
-            cur.execute('SELECT model_id, project_id, parameter_set_id, training_data_from, training_data_until, train_timestamp, deployment_stage FROM trained_models')
+            cur.execute('SELECT model_id, project_id, parameter_set_id, training_data_from, training_data_until, train_timestamp, deployment_stage, model_object FROM trained_models')
 
             models = []
-            for model_id, project_id, parameter_set_id, data_start, data_end, train_timestamp, deployment_stage in cur:
+            for model_id, project_id, parameter_set_id, data_start, data_end, train_timestamp, deployment_stage, model_object in cur:
                 models.append(
                     {
                         "model_id" : model_id,
                         "project_id" : project_id,
                         "parameter_set_id" : parameter_set_id,
-                        "training_data_start" : data_start.isoformat(),
-                        "training_data_end" : data_end.isoformat(),
+                        "training_data_from" : data_start.isoformat(),
+                        "training_data_until" : data_end.isoformat(),
                         "train_timestamp" : train_timestamp.isoformat(),
-                        "deployment_stage" : deployment_stage
+                        "deployment_stage" : deployment_stage,
+                        "model_object" : model_object
                     })
     
     conn.close()
