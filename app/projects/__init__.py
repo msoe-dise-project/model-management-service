@@ -9,6 +9,7 @@ import psycopg2
 from psycopg2.extras import Json
 
 from app.database import get_database_uri
+from app.schemas import Project
 from app.schemas import ProjectSchema
 from app.schemas import ValidationError
 
@@ -42,14 +43,10 @@ def list_projects():
         with conn.cursor() as cur:
             cur.execute("SELECT project_id, project_name FROM projects")
             
-            projects = []
-            for _id, _name in cur:
-                project = {
-                    "project_id" : _id,
-                    "project_name" : _name
-                }
-                
-                projects.append(project)
+            projects = [
+                Project(_name, _id) \
+                for _id, _name in cur
+            ]
 
     conn.commit()
     conn.close()
@@ -67,10 +64,7 @@ def get_project(project_id):
             
             _id, _name = cur.fetchone()
             
-            project = {
-                "project_id" : _id,
-                "project_name" : _name
-            }
+            project = Project(_name, _id)
 
     conn.commit()
     conn.close()

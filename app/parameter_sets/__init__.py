@@ -9,6 +9,8 @@ import psycopg2
 from psycopg2.extras import Json
 
 from app.database import get_database_uri
+from app.schemas import ParameterSet
+from app.schemas import ParameterSetPatch
 from app.schemas import ParameterSetPatchSchema
 from app.schemas import ParameterSetSchema
 from app.schemas import ValidationError
@@ -45,15 +47,10 @@ def list_parameter_sets():
         with conn.cursor() as cur:
             cur.execute('SELECT parameter_set_id, project_id, training_parameters, is_active FROM parameter_sets')
 
-            parameter_sets = []
-            for parameter_set_id, project_id, params, is_active in cur:
-                parameter_sets.append(
-                    {
-                        "parameter_set_id" : parameter_set_id,
-                        "project_id" : project_id,
-                        "training_parameters" : params,
-                        "is_active" : is_active
-                    })
+            parameter_sets = [
+                ParameterSet(project_id, params, is_active, parameter_set_id) \
+                for parameter_set_id, project_id, params, is_active in cur
+            ]
     
     conn.close()
 
@@ -69,11 +66,7 @@ def get_parameter_set(parameter_set_id):
 
             params_id, project_id, params, is_active = cur.fetchone()
 
-            obj = { "parameter_set_id" : params_id,
-                    "project_id" : project_id,
-                    "training_parameters" : params,
-                    "is_active" : is_active
-            }
+            obj = ParameterSet(project_id, params, is_active, parameter_set_id)
     
     conn.close()
 
@@ -94,11 +87,9 @@ def update_parameter_set_status(parameter_set_id):
                          parameter_set_id))
 
             parameter_set_id = cur.fetchone()[0]
+            patch.parameter_set_id = parameter_set_id
 
     conn.commit()
     conn.close()
 
-    return jsonify({
-        "parameter_set_id" : parameter_set_id,
-        "is_active" : patch.is_active
-    })
+    return jsonify(patch)

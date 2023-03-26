@@ -1,3 +1,5 @@
+from flask.json.provider import DefaultJSONProvider
+
 from marshmallow import fields
 from marshmallow import post_load
 from marshmallow import Schema
@@ -20,8 +22,9 @@ class ParameterSet:
         self.is_active = is_active
         
 class ParameterSetPatch:
-    def __init__(self, is_active):
+    def __init__(self, is_active, parameter_set_id=None):
         self.is_active = is_active
+        self.parameter_set_id = parameter_set_id
 
 class TrainedModel:
     def __init__(self, project_id, parameter_set_id, training_data_from, training_data_until, model_object, train_timestamp, deployment_stage, model_id=None):
@@ -35,8 +38,9 @@ class TrainedModel:
         self.model_id = model_id
         
 class TrainedModelPatch:
-    def __init__(self, deployment_stage):
+    def __init__(self, deployment_stage, model_id=None):
         self.deployment_stage = deployment_stage
+        self.model_id = model_id
         
 class ModelTest:
     def __init__(self, project_id, parameter_set_id, model_id, test_timestamp, test_metrics, passed_testing, test_id=None):
@@ -68,6 +72,7 @@ class ParameterSetSchema(Schema):
         
 class ParameterSetPatchSchema(Schema):
     is_active = fields.Boolean(required=True)
+    parameter_set_id = fields.Integer()
     
     @post_load
     def make_parameter_set_patch(self, data, **kwargs):
@@ -89,6 +94,7 @@ class TrainedModelSchema(Schema):
         
 class TrainedModelPatchSchema(Schema):
     deployment_stage = fields.String(required=True)
+    model_id = fields.Integer()
     
     @post_load
     def make_trained_model_patch(self, data, **kwargs):
@@ -106,3 +112,21 @@ class ModelTestSchema(Schema):
     @post_load
     def make_test_results(self, data, **kwargs):
         return ModelTest(**data)
+        
+class CustomJSONProvider(DefaultJSONProvider):
+    @staticmethod
+    def default(o):
+        if isinstance(o, Project):
+            return ProjectSchema().dump(o)
+        if isinstance(o, ParameterSetPatch):
+            return ParameterSetPatchSchema().dump(o)
+        elif isinstance(o, ParameterSet):
+            return ParameterSetSchema().dump(o)
+        elif isinstance(o, TrainedModel):
+            return TrainedModelSchema().dump(o)
+        elif isinstance(o, TrainedModelPatch):
+            return TrainedModelPatchSchema().dump(o)
+        elif isinstance(o, ModelTest):
+            return ModelTestSchema().dump(o)
+        
+        return DefaultJSONProvider.default(o)

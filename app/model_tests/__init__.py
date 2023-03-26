@@ -9,6 +9,7 @@ import psycopg2
 from psycopg2.extras import Json
 
 from app.database import get_database_uri
+from app.schemas import ModelTest
 from app.schemas import ModelTestSchema
 from app.schemas import ValidationError
 
@@ -49,18 +50,11 @@ def list_models():
         with conn.cursor() as cur:
             cur.execute('SELECT test_id, project_id, parameter_set_id, model_id, test_timestamp, test_metrics, passed_testing FROM model_tests')
 
-            tests = []
-            for test_id, project_id, parameter_set_id, model_id, test_timestamp, test_metrics, passed_testing in cur:
-                tests.append(
-                    {
-                        "test_id" : test_id,
-                        "model_id" : model_id,
-                        "project_id" : project_id,
-                        "parameter_set_id" : parameter_set_id,
-                        "test_timestamp" : test_timestamp.isoformat(),
-                        "test_metrics" : test_metrics,
-                        "passed_testing" : passed_testing
-                    })
+            tests = [
+                ModelTest(project_id, parameter_set_id, model_id, test_timestamp, test_metrics, passed_testing, test_id) \
+                for test_id, project_id, parameter_set_id, model_id, test_timestamp, test_metrics, passed_testing in cur
+            ]
+
     conn.close()
 
     return jsonify({ "model_tests" : tests })
@@ -75,15 +69,8 @@ def get_model_by_id(test_id):
             cur.execute(query, (test_id,))
 
             test_id, project_id, parameter_set_id, model_id, test_timestamp, test_metrics, passed_testing = cur.fetchone()
-            test = {
-                        "test_id" : test_id,
-                        "model_id" : model_id,
-                        "project_id" : project_id,
-                        "parameter_set_id" : parameter_set_id,
-                        "test_timestamp" : test_timestamp.isoformat(),
-                        "test_metrics" : test_metrics,
-                        "passed_testing" : passed_testing
-                    }
+            test = ModelTest(project_id, parameter_set_id, model_id, test_timestamp, test_metrics, passed_testing, test_id)
+    
     conn.close()
 
     return jsonify(test)
