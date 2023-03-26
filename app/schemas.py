@@ -118,7 +118,7 @@ class CustomJSONProvider(DefaultJSONProvider):
     def default(o):
         if isinstance(o, Project):
             return ProjectSchema().dump(o)
-        if isinstance(o, ParameterSetPatch):
+        elif isinstance(o, ParameterSetPatch):
             return ParameterSetPatchSchema().dump(o)
         elif isinstance(o, ParameterSet):
             return ParameterSetSchema().dump(o)
