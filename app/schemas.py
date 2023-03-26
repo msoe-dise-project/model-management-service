@@ -22,8 +22,9 @@ class ParameterSet:
         self.is_active = is_active
         
 class ParameterSetPatch:
-    def __init__(self, is_active):
+    def __init__(self, is_active, parameter_set_id=None):
         self.is_active = is_active
+        self.parameter_set_id = parameter_set_id
 
 class TrainedModel:
     def __init__(self, project_id, parameter_set_id, training_data_from, training_data_until, model_object, train_timestamp, deployment_stage, model_id=None):
@@ -70,6 +71,7 @@ class ParameterSetSchema(Schema):
         
 class ParameterSetPatchSchema(Schema):
     is_active = fields.Boolean(required=True)
+    parameter_set_id = fields.Integer()
     
     @post_load
     def make_parameter_set_patch(self, data, **kwargs):
@@ -114,6 +116,8 @@ class CustomJSONProvider(DefaultJSONProvider):
     def default(o):
         if isinstance(o, Project):
             return ProjectSchema().dump(o)
+        if isinstance(o, ParameterSetPatch):
+            return ParameterSetPatchSchema().dump(o)
         elif isinstance(o, ParameterSet):
             return ParameterSetSchema().dump(o)
         elif isinstance(o, TrainedModel):
