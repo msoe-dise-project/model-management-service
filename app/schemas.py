@@ -38,8 +38,9 @@ class TrainedModel:
         self.model_id = model_id
         
 class TrainedModelPatch:
-    def __init__(self, deployment_stage):
+    def __init__(self, deployment_stage, model_id=None):
         self.deployment_stage = deployment_stage
+        self.model_id = model_id
         
 class ModelTest:
     def __init__(self, project_id, parameter_set_id, model_id, test_timestamp, test_metrics, passed_testing, test_id=None):
@@ -93,6 +94,7 @@ class TrainedModelSchema(Schema):
         
 class TrainedModelPatchSchema(Schema):
     deployment_stage = fields.String(required=True)
+    model_id = fields.Integer()
     
     @post_load
     def make_trained_model_patch(self, data, **kwargs):
