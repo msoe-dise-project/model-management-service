@@ -1,3 +1,5 @@
+from flask.json.provider import DefaultJSONProvider
+
 from marshmallow import fields
 from marshmallow import post_load
 from marshmallow import Schema
@@ -106,3 +108,19 @@ class ModelTestSchema(Schema):
     @post_load
     def make_test_results(self, data, **kwargs):
         return ModelTest(**data)
+        
+class CustomJSONProvider(DefaultJSONProvider):
+    @staticmethod
+    def default(o):
+        if isinstance(o, Project):
+            return ProjectSchema().dump(o)
+        elif isinstance(o, ParameterSet):
+            return ParameterSetSchema().dump(o)
+        elif isinstance(o, TrainedModel):
+            return TrainedModelSchema().dump(o)
+        elif isinstance(o, TrainedModelPatch):
+            return TrainedModelPatchSchema().dump(o)
+        elif isinstance(o, ModelTest):
+            return ModelTestSchema().dump(o)
+        
+        return DefaultJSONProvider.default(o)
