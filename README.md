@@ -1,13 +1,13 @@
-# Model Management Service
+# Ringling
 
-The model management service is responsible for tracking:
+Ringling is a model management service responsible for tracking:
 
 1. Model training parameters
 1. Trained models
-1. Model test results
+1. Model evaluation results
 
 ## Running the Service
-The service can be run with Docker compose like so:
+The service can be run with Docker Compose like so:
 
 ```bash
 $ docker compose build --no-cache
