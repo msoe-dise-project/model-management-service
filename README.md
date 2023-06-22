@@ -31,10 +31,24 @@ CONTAINER ID   IMAGE                      COMMAND                  CREATED      
 
 Both containers should have a status of "healthy".  If you see "health: starting", wait a minute and query the status again.
 
+Once the service is running, you can run the tests and check their output like so:
+
+```bash
+$ docker compose up -d model-management-service-tests
+$ docker logs model-management-service-tests
+......................
+----------------------------------------------------------------------
+Ran 22 tests in 0.760s
+
+OK
+```
+
 ## Documentation
 
 * [Database Schema](docs/database_schema.md)
 * [REST API](docs/rest_api/README.md)
 
+## License
 
-	
+Unless otherwise noted, the source files are distributed
+under the Apache Version 2.0 license found in the LICENSE file.	

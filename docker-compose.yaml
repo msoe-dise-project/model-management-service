@@ -52,6 +52,19 @@ services:
     environment:
       POSTGRES_HOST: "db"
       POSTGRES_USERNAME: "model_management_service"
-      POSTGRES_PASSWORD: "apassword"
+      POSTGRES_PASSWORD: "abadpassword"
       FLASK_RUN_PORT: "8888"
       FLASK_RUN_HOST: "0.0.0.0"
+
+  model-management-service-tests:
+    build:
+      context: ./tests
+      no_cache: true
+    image: model-management-service-tests
+    container_name: model-management-service-tests
+    restart: "no"
+    depends_on:
+      model-management-service:
+        condition: service_healthy
+    environment:
+      BASE_URL: "http://model-management-service:8888"
