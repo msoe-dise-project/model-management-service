@@ -29,7 +29,7 @@ def create_project():
             cur.execute(f'SELECT project_name FROM projects WHERE project_name=\'{project.project_name}\' LIMIT 1')
             result = cur.fetchone()
             if result is not None:
-                return jsonify(f"Project {project.project_name} already exists"), 400
+                return jsonify({"error": f"Project {project.project_name} already exists"}), 400
             else:
                 cur.execute('INSERT INTO projects (project_name) VALUES (%s) RETURNING project_id',
                             (project.project_name,))
@@ -67,7 +67,7 @@ def get_project(project_id):
                         (project_id,))
             result = cur.fetchone()
             if result is None:
-                return jsonify(f"ID {project_id} not found"), 404
+                return jsonify({"error": f"ID {project_id} not found"}), 404
             else:
                 _id, _name = result
                 project = Project(_name, _id)
