@@ -31,3 +31,11 @@ Access a single project
 **Condition** : If no project with that id was found
 
 **Code** : `404 Not Found`
+
+**Content example**
+
+```json
+{
+    "error": "ID 5 not found"
+}
+```

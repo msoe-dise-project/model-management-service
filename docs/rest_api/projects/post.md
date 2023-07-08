@@ -52,3 +52,16 @@ Creates a project and assigns a unique id.
     "error": "The project_name field is required."
 }
 ```
+<br>
+
+**Condition** : If a project with name in the project\_name field already exists
+
+**Code** : `400 BAD REQUEST`
+
+**Content example**
+
+```json
+{
+    "error": "Project test already exists"
+}
+```

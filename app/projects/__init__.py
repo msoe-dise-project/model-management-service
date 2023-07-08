@@ -26,10 +26,14 @@ def create_project():
     uri = get_database_uri()
     with psycopg2.connect(uri) as conn:
         with conn.cursor() as cur:
-            cur.execute('INSERT INTO projects (project_name) VALUES (%s) RETURNING project_id',
-                        (project.project_name,))
-
-            project_id = cur.fetchone()[0]
+            cur.execute(f'SELECT project_name FROM projects WHERE project_name=\'{project.project_name}\' LIMIT 1')
+            result = cur.fetchone()
+            if result is not None:
+                return jsonify({"error": f"Project {project.project_name} already exists"}), 400
+            else:
+                cur.execute('INSERT INTO projects (project_name) VALUES (%s) RETURNING project_id',
+                            (project.project_name,))
+                project_id = cur.fetchone()[0]
 
     conn.commit()
     conn.close()
@@ -61,10 +65,12 @@ def get_project(project_id):
             cur.execute("SELECT project_id, project_name FROM projects "
                         "WHERE project_id = %s",
                         (project_id,))
-            
-            _id, _name = cur.fetchone()
-            
-            project = Project(_name, _id)
+            result = cur.fetchone()
+            if result is None:
+                return jsonify({"error": f"ID {project_id} not found"}), 404
+            else:
+                _id, _name = result
+                project = Project(_name, _id)
 
     conn.commit()
     conn.close()

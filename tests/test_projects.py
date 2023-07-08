@@ -39,7 +39,7 @@ class ProjectsTests(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         
     def test_get_project(self):
-        obj = { "project_name" : "test" }
+        obj = { "project_name" : "test2" }
 
         response = requests.post(self.get_url(),
                             json=obj)
