@@ -61,6 +61,27 @@ class ProjectsTests(unittest.TestCase):
         self.assertIn("project_id", json_obj)
         self.assertIn("project_name", json_obj)
 
+    def test_get_project_bad_id(self):
+        project_id = 0
+
+        url = os.path.join(self.get_url(), str(project_id))
+
+        response = requests.get(url)
+        self.assertEqual(response.status_code, 404)
+
+        json_obj = response.json()
+        self.assertIn("error", json_obj)
+
+    def test_get_project_bad_name(self):
+        obj = { "project_name" : "test" }
+
+        response = requests.post(self.get_url(),
+                            json=obj)
+        self.assertEqual(response.status_code, 400)
+
+        json_obj = response.json()
+        self.assertIn("error", json_obj)
+
 if __name__ == "__main__":
     if BASE_URL_KEY not in os.environ:
         print("Must define the base URL using the {} environment variable".format(BASE_URL_KEY))

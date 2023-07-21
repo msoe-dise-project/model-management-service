@@ -64,9 +64,12 @@ def get_parameter_set(parameter_set_id):
             cur.execute('SELECT parameter_set_id, project_id, training_parameters, is_active FROM parameter_sets WHERE parameter_set_id = %s',
                         (parameter_set_id,))
 
-            params_id, project_id, params, is_active = cur.fetchone()
-
-            obj = ParameterSet(project_id, params, is_active, parameter_set_id)
+            result = cur.fetchone()
+            if result is None:
+                return jsonify({"error": f"ID {parameter_set_id} not found"}), 404
+            else:
+                params_id, project_id, params, is_active = result
+                obj = ParameterSet(project_id, params, is_active, parameter_set_id)
     
     conn.close()
 
@@ -85,9 +88,12 @@ def update_parameter_set_status(parameter_set_id):
             cur.execute('UPDATE parameter_sets SET is_active = %s WHERE parameter_set_id = %s RETURNING parameter_set_id',
                         (patch.is_active,
                          parameter_set_id))
-
-            parameter_set_id = cur.fetchone()[0]
-            patch.parameter_set_id = parameter_set_id
+            result = cur.fetchone()
+            if result is None:
+                return jsonify({"error": f"ID {parameter_set_id} not found"}), 404
+            else:
+                parameter_set_id = result[0]
+                patch.parameter_set_id = parameter_set_id
 
     conn.commit()
     conn.close()

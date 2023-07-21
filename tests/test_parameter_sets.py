@@ -148,6 +148,17 @@ class ParameterSetsTests(unittest.TestCase):
         self.assertEqual(obj["project_id"], json_response2["project_id"])
         self.assertEqual(obj["training_parameters"], json_response2["training_parameters"])
         self.assertEqual(obj["is_active"], json_response2["is_active"])
+
+    def test_get_by_bad_id(self):
+        param_id = 0
+
+        url = os.path.join(self.get_url(), str(param_id))
+
+        response = requests.get(url)
+        self.assertEqual(response.status_code, 404)
+
+        json_obj = response.json()
+        self.assertIn("error", json_obj)
         
     def test_update_status(self):
         obj = { "project_id" : 5,
@@ -208,6 +219,18 @@ class ParameterSetsTests(unittest.TestCase):
         response = requests.patch(url, json=update)
 
         self.assertEqual(response.status_code, 400)
+
+    def test_update_status_bad_id(self):
+        param_id = 0
+
+        url = os.path.join(self.get_url(),
+                           str(param_id))
+
+        update = {"is_active" : False }
+
+        response = requests.patch(url, json=update)
+
+        self.assertEqual(response.status_code, 404)
 
 if __name__ == "__main__":
     if BASE_URL_KEY not in os.environ:
