@@ -71,9 +71,12 @@ def get_model_by_id(model_id):
             query = "SELECT model_id, project_id, parameter_set_id, training_data_from, training_data_until, model_object, train_timestamp, deployment_stage " + \
                     "FROM trained_models WHERE model_id = %s"
             cur.execute(query, (model_id,))
-            
-            model_id, project_id, parameter_set_id, data_start, data_end, model_object, train_timestamp, deployment_stage = cur.fetchone()
-            model = TrainedModel(project_id, parameter_set_id, data_start, data_end, model_object, train_timestamp, deployment_stage, model_id)
+            result = cur.fetchone()
+            if result is None:
+                return jsonify({"error": f"ID {model_id} not found"}), 404
+            else:
+                model_id, project_id, parameter_set_id, data_start, data_end, model_object, train_timestamp, deployment_stage = result
+                model = TrainedModel(project_id, parameter_set_id, data_start, data_end, model_object, train_timestamp, deployment_stage, model_id)
     
     conn.close()
 
@@ -96,9 +99,12 @@ def update_trained_model(model_id):
             cur.execute(query,
                         (patch.deployment_stage,
                          model_id))
-
-            model_id = cur.fetchone()[0]
-            patch.model_id = model_id
+            result = cur.fetchone()
+            if result is None:
+                return jsonify({"error": f"ID {model_id} not found"}), 404
+            else:
+                model_id = result[0]
+                patch.model_id = model_id
 
     conn.commit()
     

@@ -125,6 +125,17 @@ class ModelTestsTests(unittest.TestCase):
 
         self.assertEqual(response.status_code, 200)
 
+    def test_get_test_by_bad_id(self):
+            test_id = 0
+
+            url = os.path.join(self.get_url(), str(test_id))
+
+            response = requests.get(url)
+            self.assertEqual(response.status_code, 404)
+
+            json_obj = response.json()
+            self.assertIn("error", json_obj)
+
 if __name__ == "__main__":
     if BASE_URL_KEY not in os.environ:
         print("Must define the base URL using the {} environment variable".format(BASE_URL_KEY))

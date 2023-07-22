@@ -134,7 +134,18 @@ class TrainedModelTests(unittest.TestCase):
         json_response = response.json()
         unpickled_model = pickle.loads(bytes.fromhex(json_response["model_object"]))
         self.assertEqual(test_model, unpickled_model)
-        
+
+    def test_get_model_by_bad_id(self):
+            model_id = 0
+
+            url = os.path.join(self.get_url(), str(model_id))
+
+            response = requests.get(url)
+            self.assertEqual(response.status_code, 404)
+
+            json_obj = response.json()
+            self.assertIn("error", json_obj)
+
     def test_model_status_update(self):
         test_model = set([5, 21, 13])
         obj1 = { "project_id" : 5,
@@ -201,6 +212,18 @@ class TrainedModelTests(unittest.TestCase):
         response = requests.patch(url, json=patch)
 
         self.assertEqual(response.status_code, 400)
+
+    def test_model_status_update_bad_id(self):
+        model_id = 0
+
+        url = os.path.join(self.get_url(),
+                           str(model_id))
+
+        update = {"deployment_stage" : "retired"}
+
+        response = requests.patch(url, json=update)
+
+        self.assertEqual(response.status_code, 404)
 
 if __name__ == "__main__":
     if BASE_URL_KEY not in os.environ:

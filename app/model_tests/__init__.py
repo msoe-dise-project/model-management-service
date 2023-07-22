@@ -67,9 +67,12 @@ def get_model_by_id(test_id):
             query = "SELECT test_id, project_id, parameter_set_id, model_id, test_timestamp, test_metrics, passed_testing " + \
                     "FROM model_tests WHERE test_id = %s"
             cur.execute(query, (test_id,))
-
-            test_id, project_id, parameter_set_id, model_id, test_timestamp, test_metrics, passed_testing = cur.fetchone()
-            test = ModelTest(project_id, parameter_set_id, model_id, test_timestamp, test_metrics, passed_testing, test_id)
+            result = cur.fetchone()
+            if result is None:
+                return jsonify({"error": f"ID {test_id} not found"}), 404
+            else:
+                test_id, project_id, parameter_set_id, model_id, test_timestamp, test_metrics, passed_testing = result
+                test = ModelTest(project_id, parameter_set_id, model_id, test_timestamp, test_metrics, passed_testing, test_id)
     
     conn.close()
 
