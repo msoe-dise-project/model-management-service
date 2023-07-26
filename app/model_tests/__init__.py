@@ -27,7 +27,7 @@ def create_trained_model():
         with conn.cursor() as cur:
             query = "INSERT INTO model_tests (project_id, parameter_set_id, model_id, test_timestamp, test_metrics, passed_testing) " + \
                     "VALUES (%s, %s, %s, %s, %s, %s) " + \
-                    "RETURNING model_id"
+                    "RETURNING test_id"
 
             cur.execute(query,
                         (model_test.project_id,
