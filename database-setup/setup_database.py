@@ -77,9 +77,12 @@ if __name__ == "__main__":
                         # serialized objects are stored as hex string representations of bytes objects
                         "model_object text NOT NULL, "
                         "train_timestamp timestamp NOT NULL, "
-                        "deployment_stage model_deployment_stage NOT NULL "
+                        "deployment_stage model_deployment_stage NOT NULL, "
+                        "backtest_timestamp timestamp NOT NULL, "
+                        "backtest_metrics JSONB NOT NULL, "
+                        "passed_backtesting bool NOT NULL "
                         ");")
-                        
+
             cur.execute("DROP TABLE IF EXISTS model_tests;")
 
             cur.execute("CREATE TABLE model_tests ( "

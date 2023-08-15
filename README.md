@@ -36,15 +36,16 @@ Once the service is running, you can run the tests and check their output like s
 ```bash
 $ docker compose up -d model-management-service-tests
 $ docker logs model-management-service-tests
-......................
+.............................
 ----------------------------------------------------------------------
-Ran 22 tests in 0.760s
+Ran 29 tests in 0.380s
 
 OK
 ```
 
 ## Documentation
 
+* [Tutorial](docs/tutorial/ringling_tutorial.md)
 * [Database Schema](docs/database_schema.md)
 * [REST API](docs/rest_api/README.md)
 

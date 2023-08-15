@@ -27,8 +27,10 @@ def create_trained_model():
     uri = get_database_uri()
     with psycopg2.connect(uri) as conn:
         with conn.cursor() as cur:
-            query = "INSERT INTO trained_models (project_id, parameter_set_id, training_data_from, training_data_until, model_object, train_timestamp, deployment_stage) " + \
-                    "VALUES (%s, %s, %s, %s, %s, %s, %s) " + \
+            query = "INSERT INTO trained_models (project_id, parameter_set_id, training_data_from, " \
+                    "training_data_until, model_object, train_timestamp, deployment_stage, backtest_timestamp, " \
+                    "backtest_metrics, passed_backtesting) " + \
+                    "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s) " + \
                     "RETURNING model_id"
 
             cur.execute(query,
@@ -38,7 +40,10 @@ def create_trained_model():
                          trained_model.training_data_until,
                          trained_model.model_object,
                          trained_model.train_timestamp,
-                         trained_model.deployment_stage))
+                         trained_model.deployment_stage,
+                         trained_model.backtest_timestamp,
+                         Json(trained_model.backtest_metrics),
+                         trained_model.passed_backtesting))
 
             model_id = cur.fetchone()[0]
 
@@ -52,11 +57,15 @@ def list_models():
     uri = get_database_uri()
     with psycopg2.connect(uri) as conn:
         with conn.cursor() as cur:
-            cur.execute('SELECT model_id, project_id, parameter_set_id, training_data_from, training_data_until, train_timestamp, deployment_stage, model_object FROM trained_models')
+            cur.execute('SELECT model_id, project_id, parameter_set_id, training_data_from, training_data_until,'
+                        ' train_timestamp, deployment_stage, model_object, backtest_timestamp, backtest_metrics, passed_backtesting'
+                        ' FROM trained_models')
 
             models = [
-                TrainedModel(project_id, parameter_set_id, data_start, data_end, model_object, train_timestamp, deployment_stage, model_id) \
-                for model_id, project_id, parameter_set_id, data_start, data_end, train_timestamp, deployment_stage, model_object in cur
+                TrainedModel(project_id, parameter_set_id, data_start, data_end, model_object, train_timestamp,
+                             deployment_stage, backtest_timestamp, backtest_metrics, passed_backtesting, model_id)
+                for model_id, project_id, parameter_set_id, data_start, data_end, train_timestamp, deployment_stage,
+                model_object, backtest_timestamp, backtest_metrics, passed_backtesting in cur
             ]
 
     conn.close()
@@ -68,15 +77,19 @@ def get_model_by_id(model_id):
     uri = get_database_uri()
     with psycopg2.connect(uri) as conn:
         with conn.cursor() as cur:
-            query = "SELECT model_id, project_id, parameter_set_id, training_data_from, training_data_until, model_object, train_timestamp, deployment_stage " + \
+            query = "SELECT model_id, project_id, parameter_set_id, training_data_from, training_data_until, " \
+                    "model_object, train_timestamp, deployment_stage, backtest_timestamp, backtest_metrics, passed_backtesting " + \
                     "FROM trained_models WHERE model_id = %s"
+            print(query)
             cur.execute(query, (model_id,))
             result = cur.fetchone()
             if result is None:
                 return jsonify({"error": f"ID {model_id} not found"}), 404
             else:
-                model_id, project_id, parameter_set_id, data_start, data_end, model_object, train_timestamp, deployment_stage = result
-                model = TrainedModel(project_id, parameter_set_id, data_start, data_end, model_object, train_timestamp, deployment_stage, model_id)
+                model_id, project_id, parameter_set_id, data_start, data_end, model_object, train_timestamp, \
+                    deployment_stage, backtest_timestamp, backtest_metrics, passed_backtesting = result
+                model = TrainedModel(project_id, parameter_set_id, data_start, data_end, model_object, train_timestamp,
+                                     deployment_stage, backtest_timestamp, backtest_metrics, passed_backtesting, model_id)
     
     conn.close()
 

@@ -27,7 +27,8 @@ class ParameterSetPatch:
         self.parameter_set_id = parameter_set_id
 
 class TrainedModel:
-    def __init__(self, project_id, parameter_set_id, training_data_from, training_data_until, model_object, train_timestamp, deployment_stage, model_id=None):
+    def __init__(self, project_id, parameter_set_id, training_data_from, training_data_until, model_object,
+                 train_timestamp, deployment_stage, backtest_timestamp, backtest_metrics, passed_backtesting, model_id=None):
         self.project_id = project_id
         self.parameter_set_id = parameter_set_id
         self.training_data_from = training_data_from
@@ -35,13 +36,16 @@ class TrainedModel:
         self.model_object = model_object
         self.train_timestamp = train_timestamp
         self.deployment_stage = deployment_stage
+        self.backtest_timestamp = backtest_timestamp
+        self.backtest_metrics = backtest_metrics
+        self.passed_backtesting = passed_backtesting
         self.model_id = model_id
         
 class TrainedModelPatch:
     def __init__(self, deployment_stage, model_id=None):
         self.deployment_stage = deployment_stage
         self.model_id = model_id
-        
+
 class ModelTest:
     def __init__(self, project_id, parameter_set_id, model_id, test_timestamp, test_metrics, passed_testing, test_id=None):
         self.test_id = test_id
@@ -87,6 +91,9 @@ class TrainedModelSchema(Schema):
     model_object = fields.String(required=True)
     train_timestamp = fields.DateTime(required=True)
     deployment_stage = fields.String(required=True)
+    backtest_timestamp = fields.DateTime(required=True)
+    backtest_metrics = fields.Raw(required=True)
+    passed_backtesting = fields.Boolean(required=True)
     
     @post_load
     def make_trained_model(self, data, **kwargs):
@@ -99,7 +106,8 @@ class TrainedModelPatchSchema(Schema):
     @post_load
     def make_trained_model_patch(self, data, **kwargs):
         return TrainedModelPatch(**data)
-        
+
+
 class ModelTestSchema(Schema):
     model_id = fields.Integer(required=True)
     project_id = fields.Integer(required=True)
@@ -108,11 +116,11 @@ class ModelTestSchema(Schema):
     test_timestamp = fields.DateTime(required=True)
     test_metrics = fields.Raw(required=True)
     passed_testing = fields.Boolean(required=True)
-    
+
     @post_load
     def make_test_results(self, data, **kwargs):
         return ModelTest(**data)
-        
+
 class CustomJSONProvider(DefaultJSONProvider):
     @staticmethod
     def default(o):
@@ -128,5 +136,5 @@ class CustomJSONProvider(DefaultJSONProvider):
             return TrainedModelPatchSchema().dump(o)
         elif isinstance(o, ModelTest):
             return ModelTestSchema().dump(o)
-        
+
         return DefaultJSONProvider.default(o)
