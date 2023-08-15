@@ -22,7 +22,10 @@ class TrainedModelTests(unittest.TestCase):
                 "training_data_until" : dt.datetime.now().isoformat(),
                 "model_object" : pickle.dumps(test_model).hex(),
                 "train_timestamp" : dt.datetime.now().isoformat(),
-                "deployment_stage" : "testing"
+                "deployment_stage" : "testing",
+                "backtest_timestamp": dt.datetime.now().isoformat(),
+                "backtest_metrics": {"recall": 0.8, "precision": 0.2},
+                "passed_backtesting": True
         }
 
         response = requests.post(self.get_url(),
@@ -44,7 +47,10 @@ class TrainedModelTests(unittest.TestCase):
                 "training_data_until" : "last month",
                 "model_object" : pickle.dumps(test_model).hex(),
                 "train_timestamp" : "today",
-                "deployment_stage" : "testing"
+                "deployment_stage" : "testing",
+                "we're testing now?": dt.datetime.now().isoformat(),
+                "test_metrics": {"recall": 0.8, "precision": 0.2},
+                "passed_testing": True
         }
 
         response = requests.post(self.get_url(),
@@ -61,7 +67,10 @@ class TrainedModelTests(unittest.TestCase):
                  "training_data_until" : dt.datetime.now().isoformat(),
                  "model_object" : pickle.dumps(test_model1).hex(),
                  "train_timestamp" : dt.datetime.now().isoformat(),
-                 "deployment_stage" : "testing"
+                 "deployment_stage" : "testing",
+                 "backtest_timestamp": dt.datetime.now().isoformat(),
+                 "backtest_metrics": {"recall": 0.8, "precision": 0.2},
+                 "passed_backtesting": True
         }
                  
         response = requests.post(self.get_url(),
@@ -76,7 +85,10 @@ class TrainedModelTests(unittest.TestCase):
                  "training_data_until" : dt.datetime.now().isoformat(),
                  "model_object" : pickle.dumps(test_model2).hex(),
                  "train_timestamp" : dt.datetime.now().isoformat(),
-                 "deployment_stage" : "testing"
+                 "deployment_stage" : "testing",
+                 "backtest_timestamp": dt.datetime.now().isoformat(),
+                 "backtest_metrics": {"recall": 0.7, "precision": 0.3},
+                 "passed_backtesting": True
         }
                  
         response = requests.post(self.get_url(),
@@ -91,7 +103,10 @@ class TrainedModelTests(unittest.TestCase):
                  "training_data_until" : dt.datetime.now().isoformat(),
                  "model_object" : pickle.dumps(test_model3).hex(),
                  "train_timestamp" : dt.datetime.now().isoformat(),
-                 "deployment_stage" : "testing"
+                 "deployment_stage" : "testing",
+                 "backtest_timestamp": dt.datetime.now().isoformat(),
+                 "backtest_metrics": {"recall": 0.9, "precision": 0.1},
+                 "passed_backtesting": True
         }
                  
         response = requests.post(self.get_url(),
@@ -114,7 +129,10 @@ class TrainedModelTests(unittest.TestCase):
                  "training_data_until" : dt.datetime.now().isoformat(),
                  "model_object" : pickle.dumps(test_model).hex(),
                  "train_timestamp" : dt.datetime.now().isoformat(),
-                 "deployment_stage" : "testing"
+                 "deployment_stage" : "testing",
+                 "backtest_timestamp": dt.datetime.now().isoformat(),
+                 "backtest_metrics": {"recall": 0.8, "precision": 0.2},
+                 "passed_backtesting": True
         }
 
         response = requests.post(self.get_url(),
@@ -136,15 +154,15 @@ class TrainedModelTests(unittest.TestCase):
         self.assertEqual(test_model, unpickled_model)
 
     def test_get_model_by_bad_id(self):
-            model_id = 0
+        model_id = 0
 
-            url = os.path.join(self.get_url(), str(model_id))
+        url = os.path.join(self.get_url(), str(model_id))
 
-            response = requests.get(url)
-            self.assertEqual(response.status_code, 404)
+        response = requests.get(url)
+        self.assertEqual(response.status_code, 404)
 
-            json_obj = response.json()
-            self.assertIn("error", json_obj)
+        json_obj = response.json()
+        self.assertIn("error", json_obj)
 
     def test_model_status_update(self):
         test_model = set([5, 21, 13])
@@ -154,7 +172,10 @@ class TrainedModelTests(unittest.TestCase):
                  "training_data_until" : dt.datetime.now().isoformat(),
                  "model_object" : pickle.dumps(test_model).hex(),
                  "train_timestamp" : dt.datetime.now().isoformat(),
-                 "deployment_stage" : "testing"
+                 "deployment_stage" : "testing",
+                 "backtest_timestamp": dt.datetime.now().isoformat(),
+                 "backtest_metrics": {"recall": 0.8, "precision": 0.2},
+                 "passed_backtesting": True
         }
 
         response = requests.post(self.get_url(),
@@ -192,7 +213,10 @@ class TrainedModelTests(unittest.TestCase):
                  "training_data_until" : dt.datetime.now().isoformat(),
                  "model_object" : pickle.dumps(test_model).hex(),
                  "train_timestamp" : dt.datetime.now().isoformat(),
-                 "deployment_stage" : "testing"
+                 "deployment_stage" : "testing",
+                 "backtest_timestamp": dt.datetime.now().isoformat(),
+                 "backtest_metrics": {"recall": 0.8, "precision": 0.2},
+                 "passed_backtesting": True
         }
 
         response = requests.post(self.get_url(),
