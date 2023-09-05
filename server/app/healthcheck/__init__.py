@@ -39,7 +39,6 @@ def healthcheck():
 
         conn.close()
     except psycopg2.Error as error:
-        print(error, flush=True)
         failure_occurred = True
 
     status_code = 200
