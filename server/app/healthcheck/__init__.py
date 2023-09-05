@@ -32,15 +32,14 @@ def healthcheck():
                 successful_connection = True
 
                 for table in tables:
-                    print("SELECT count(*) FROM {}".format(table))
-                    cur.execute("SELECT count(*) FROM %s", table)
-                    cur.fetchone()[0]
-                    successful_queries.append(table)
-
-                successful_queries = True
+                    print(f"SELECT count(*) FROM {table}")
+                    cur.execute(f"SELECT count(*) FROM {table}")
+                    count = cur.fetchone()[0]
+                    successful_queries.append(count)
 
         conn.close()
-    except:
+    except Exception as e:
+        print(e, flush=True)
         failure_occurred = True
 
     status_code = 200
