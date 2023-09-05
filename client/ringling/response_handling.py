@@ -104,5 +104,5 @@ def connection_error():
     To be called when there is a connection error
     :return: None
     """
-    print("Can not connect to model management service. Is Ringling running?", file=sys.stderr)
+    print("Can not connect to model management service. Is the Ringling server running?", file=sys.stderr)
     sys.exit(1)
