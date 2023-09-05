@@ -1,5 +1,15 @@
 #!/usr/bin/env python
 
+"""
+The Application Module
+Contains the following submodules:
+healthcheck
+model_tests
+parameter_sets
+projects
+trained_models
+"""
+
 import datetime as dt
 import os
 import sys
@@ -19,8 +29,12 @@ from app.projects import blueprint as projects_blueprint
 from app.schemas import CustomJSONProvider
 from app.trained_models import blueprint as trained_models_blueprint
 
-# this is effectively the main method
+
 def create_app():
+    """
+    This is effectively the main method
+    :return: The flask app used to run Ringling
+    """
     app = Flask(__name__)
     app.json = CustomJSONProvider(app)
 
