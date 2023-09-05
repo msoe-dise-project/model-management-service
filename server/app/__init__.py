@@ -23,9 +23,9 @@ from app.trained_models import blueprint as trained_models_blueprint
 def create_app():
     app = Flask(__name__)
     app.json = CustomJSONProvider(app)
-    
+
     db.check_environment_parameters()
-    
+
     app.register_blueprint(healthcheck_blueprint)
     app.register_blueprint(model_tests_blueprint)
     app.register_blueprint(parameter_sets_blueprint)
