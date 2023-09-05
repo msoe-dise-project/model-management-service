@@ -18,6 +18,7 @@ SERVICE_USER = "model_management_service"
 
 DATABASE_NAME = "model_management_service"
 
+# noinspection PyInterpreter
 if __name__ == "__main__":
     for key in [HOST_KEY, USER_PASSWORD_KEY, ADMIN_PASSWORD_KEY]:
         if key not in os.environ:
@@ -33,7 +34,7 @@ if __name__ == "__main__":
 
     with psycopg2.connect(admin_uri) as conn:
         with conn.cursor() as cur:
-            # need to disable transactions to create / remove databases
+            # Need to disable transactions to create / remove databases
             cur.execute("ABORT TRANSACTION;")
             # I tried using SQL parameters but psycopg2 quotes the strings
             cur.execute("DROP DATABASE IF EXISTS {};".format(DATABASE_NAME))
