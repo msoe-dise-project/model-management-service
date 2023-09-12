@@ -1,26 +1,30 @@
+"""
+Train a model given a parameter set in Ringling
+"""
+import datetime
 import pickle
 import numpy as np
 import requests
 import pandas as pd
 from sklearn.metrics import accuracy_score, precision_score, recall_score, roc_auc_score
 from sklearn.model_selection import train_test_split
-import datetime
+
 
 # Set the endpoint url for parameter set get, and trained model create
-base_url = "http://localhost:8888"
-param_url = "/v1/parameter_sets"
-model_url = "/v1/trained_models"
-param_request_url = base_url + param_url
-model_request_url = base_url + model_url
+BASE_URL = "http://localhost:8888"
+PARAM_URL = "/v1/parameter_sets"
+MODEL_URL = "/v1/trained_models"
+PARAM_REQUEST_URL = BASE_URL + PARAM_URL
+MODEL_REQUEST_URL = BASE_URL + MODEL_URL
 
 # Set this to the ID of the project you created earlier
-project_id = 3
+PROJECT_ID = 3
 
 # Set this to the ID of the parameter set you created earlier
-parameter_set_id = 9
+PARAMETER_SET_ID = 9
 
 # Send the request, get the pickled parameter set
-request_url = param_request_url + "/" + str(parameter_set_id)
+request_url = PARAM_REQUEST_URL + "/" + str(PARAMETER_SET_ID)
 response = requests.get(request_url, timeout=5)
 pickled_pipeline = response.json()["training_parameters"]
 
@@ -37,19 +41,19 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_
 train_timestamp = datetime.datetime.now().isoformat()
 
 # Time based cross validation
-# Please note that while this dataset does not indicate times,
-# the following algorithm can be used assuming the dataframe is sorted by time to generate test metrics
+# Please note that while this dataset does not indicate times, the following algorithm
+# can be used assuming the dataframe is sorted by time to generate test metrics
 
-k_splits = 5
+K_SPLITS = 5
 vals = len(X)
-partition = vals//k_splits
+partition = vals // K_SPLITS
 
-accuracies = np.zeros(k_splits-1)
-precisions = np.zeros(k_splits-1)
-recalls = np.zeros(k_splits-1)
-areas_under_roc = np.zeros(k_splits-1)
+accuracies = np.zeros(K_SPLITS - 1)
+precisions = np.zeros(K_SPLITS - 1)
+recalls = np.zeros(K_SPLITS - 1)
+areas_under_roc = np.zeros(K_SPLITS - 1)
 
-for split in range(1, k_splits):
+for split in range(1, K_SPLITS):
     train_end = partition*split
     test_end = partition*(split+1)
     X_train = X.head(train_end)
@@ -84,10 +88,7 @@ print(f"Recall Standard Deviation: {recall_std:.5f}")
 print(f"AUROC: {area_under_roc:.5f}")
 print(f"AUROC Standard Deviation: {area_under_roc_std:.5f}")
 
-if area_under_roc>0.8:
-    passed_testing = True
-else:
-    passed_testing = False
+passed_testing = bool(area_under_roc > 0.8)
 
 # Prepare metrics to be sent to Ringling
 test_metrics = {
@@ -106,8 +107,8 @@ pipeline.fit(X, y)
 pipeline_object = pickle.dumps(pipeline).hex()
 
 # Save the model to Ringling
-model_payload = {"project_id": project_id,
-                 "parameter_set_id": parameter_set_id,
+model_payload = {"project_id": PROJECT_ID,
+                 "parameter_set_id": PARAMETER_SET_ID,
                  "training_data_from": "1988-01-01T00:00:00.000000",
                  "training_data_until": "1988-12-31T23:59:59.999999",
                  "model_object": pipeline_object,
@@ -117,8 +118,7 @@ model_payload = {"project_id": project_id,
                  "backtest_metrics": test_metrics,
                  "passed_backtesting": passed_testing}
 
-response = requests.post(model_request_url, json=model_payload, timeout=5)
+response = requests.post(MODEL_REQUEST_URL, json=model_payload, timeout=5)
 
 # Make sure it worked
 print(response.json())
-

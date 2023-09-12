@@ -20,7 +20,7 @@ from app.schemas import ValidationError
 blueprint = Blueprint("model_tests", __name__)
 
 @blueprint.route('/v1/model_tests', methods=["POST"])
-def create_trained_model():
+def create_model_test():
     """
     Create a new model test in Ringling
     :return: The ID of the newly created model test, status code
@@ -53,10 +53,10 @@ def create_trained_model():
     return jsonify({"test_id" : test_id}), 201
 
 @blueprint.route('/v1/model_tests', methods=["GET"])
-def list_models():
+def list_model_tests():
     """
     Retrieve all model tests from Ringling
-    :return: The model test as a JSON object
+    :return: The model tests as a JSON object
     """
     uri = get_database_uri()
     with psycopg2.connect(uri) as conn:
@@ -76,9 +76,9 @@ def list_models():
     return jsonify({ "model_tests" : tests })
 
 @blueprint.route('/v1/model_tests/<int:test_id>', methods=["GET"])
-def get_model_by_id(test_id):
+def get_model_test_by_id(test_id):
     """
-    Retrieve a model from Ringling by ID
+    Retrieve a model test from Ringling by ID
     :param test_id: The model test ID to retrieve
     :return: the model test as a JSON object
     """

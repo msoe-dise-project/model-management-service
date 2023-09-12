@@ -38,7 +38,7 @@ def healthcheck():
                     successful_queries.append(count)
 
         conn.close()
-    except psycopg2.Error as error:
+    except psycopg2.Error:
         failure_occurred = True
 
     status_code = 200
