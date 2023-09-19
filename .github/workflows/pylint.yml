@@ -22,8 +22,6 @@ jobs:
         pip install -r server/requirements.txt
         pip install requests
         pip install scikit-learn
-        pip install numpy
-        pip install pandas
         pip install pylint
     - name: Analysing the code with pylint
       run: |
