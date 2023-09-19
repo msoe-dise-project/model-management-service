@@ -101,7 +101,7 @@ def perform_list(rest_url):
 
 def connection_error():
     """
-    To be called when there is a connection error
+    To be called when there is any type of connection error
     :return: None
     """
     print("Can not connect to model management service. Is Ringling running?", file=sys.stderr)

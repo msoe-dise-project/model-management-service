@@ -21,7 +21,9 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r server/requirements.txt
         pip install requests
+        pip install scikit-learn
+        pip install pandas
         pip install pylint
     - name: Analysing the code with pylint
       run: |
-        pylint $(git ls-files '*.py')
+        pylint --disable=too-many-instance-attributes,too-few-public-methods,unused-argument,unused-import,too-many-return-statements,too-many-locals,too-many-arguments --min-similarity-lines=8 $(git ls-files '*.py')

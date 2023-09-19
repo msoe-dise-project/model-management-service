@@ -1,25 +1,35 @@
-import argparse
-import datetime as dt
+"""
+Run tests for the healthcheck service
+"""
 import os
-import sys
 import unittest
 
 import requests
 
+from test_utils import check_base_url
+
 BASE_URL_KEY = "BASE_URL"
 
-class ProjectsTests(unittest.TestCase):
+class HealthcheckTests(unittest.TestCase):
+    """
+    Contains all tests pertaining to healthcheck service
+    """
     def get_url(self):
+        """
+        Get the URL
+        :return: The healthcheck URL
+        """
         return os.path.join(os.environ[BASE_URL_KEY], "healthcheck")
 
     def test_healthcheck(self):
-        response = requests.get(self.get_url())
-        
+        """
+        Make sure the healthcheck is working correctly
+        :return: Healthcheck passed
+        """
+        response = requests.get(self.get_url(), timeout=5)
+
         self.assertEqual(response.status_code, 200)
 
 if __name__ == "__main__":
-    if BASE_URL_KEY not in os.environ:
-        print("Must define the base URL using the {} environment variable".format(BASE_URL_KEY))
-        sys.exit(1)
-
+    check_base_url(BASE_URL_KEY)
     unittest.main()

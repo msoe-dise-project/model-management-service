@@ -1,29 +1,33 @@
+"""
+Run tests on a Ringling model and put the results back
+"""
+import datetime
 import pickle
 import requests
 import pandas as pd
 from sklearn.metrics import accuracy_score, precision_score, recall_score, roc_auc_score
-import datetime
+
 
 # Set the endpoint url for parameter set creation
-base_url = "http://localhost:8888"
-model_url = "/v1/trained_models"
-model_test_url = "/v1/model_tests"
-model_request_url = base_url + model_url
-model_test_request_url = base_url + model_test_url
+BASE_URL = "http://localhost:8888"
+MODEL_URL = "/v1/trained_models"
+MODEL_TEST_URL = "/v1/model_tests"
+MODEL_REQUEST_URL = BASE_URL + MODEL_URL
+MODEL_TEST_REQUEST_URL = BASE_URL + MODEL_TEST_URL
 
 
 # Set this to the ID of the project you created earlier
-project_id = 3
+PROJECT_ID = 3
 
 # Set this to the ID of the parameter set you created earlier
-parameter_set_id = 9
+PARAMETER_SET_ID = 9
 
 # Set this to the ID of the trained model you created earlier
-trained_model_id = 8
+TRAINED_MODEL_ID = 8
 
 # Send the request, get the pickled trained model, and unpickle it
-request_url = model_request_url + "/" + str(trained_model_id)
-response = requests.get(request_url, timeout=5)
+REQUEST_URL = MODEL_REQUEST_URL + "/" + str(TRAINED_MODEL_ID)
+response = requests.get(REQUEST_URL, timeout=5)
 pickled_model = response.json()["model_object"]
 model = pickle.loads(bytes.fromhex(pickled_model))
 
@@ -52,21 +56,17 @@ test_metrics = {
 }
 
 test_timestamp = datetime.datetime.now().isoformat()
-
-if area_under_roc>0.8:
-    passed_testing = True
-else:
-    passed_testing = False
+passed_testing = bool(area_under_roc > 0.8)
 
 # Save the model to Ringling
-test_payload = {"project_id": project_id,
-                "parameter_set_id": parameter_set_id,
-                "model_id": trained_model_id,
+test_payload = {"project_id": PROJECT_ID,
+                "parameter_set_id": PARAMETER_SET_ID,
+                "model_id": TRAINED_MODEL_ID,
                 "test_timestamp": test_timestamp,
                 "test_metrics": test_metrics,
                 "passed_testing": passed_testing}
 
-response = requests.post(model_test_request_url, json=test_payload, timeout=5)
+response = requests.post(MODEL_TEST_REQUEST_URL, json=test_payload, timeout=5)
 
 # Make sure it worked
 print(response.json())

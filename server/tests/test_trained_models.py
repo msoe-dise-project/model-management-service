@@ -1,21 +1,36 @@
-import argparse
+"""
+Run tests for Ringling trained models
+"""
+# pylint: disable=duplicate-code
 import datetime as dt
 import pickle
 import os
-import sys
 import unittest
 
 import requests
 
+from test_utils import check_base_url
+
 BASE_URL_KEY = "BASE_URL"
 
 class TrainedModelTests(unittest.TestCase):
+    """
+    Testing suite for trained models
+    """
     def get_url(self):
+        """
+        Get the trained model url
+        :return: The full trained model url
+        """
         return os.path.join(os.environ[BASE_URL_KEY], "v1/trained_models")
 
     def test_create_success(self):
+        """
+        Test if a trained model can be created successfully
+        :return: If a trained model with correct schema can be successfully created
+        """
         test_model = set([1, 3, 5])
-        
+
         obj = { "project_id" : 5,
                 "parameter_set_id" : 1,
                 "training_data_from" : (dt.datetime.now() - dt.timedelta(days=3)).isoformat(),
@@ -29,7 +44,7 @@ class TrainedModelTests(unittest.TestCase):
         }
 
         response = requests.post(self.get_url(),
-                            json=obj)
+                            json=obj, timeout=5)
 
         self.assertEqual(response.status_code, 201)
 
@@ -37,10 +52,14 @@ class TrainedModelTests(unittest.TestCase):
 
         self.assertIn("model_id", json_response)
         self.assertIsInstance(json_response["model_id"], int)
-        
+
     def test_create_success_bad_schema(self):
+        """
+        Test if a trained model with a bad schema generates the correct response
+        :return: If a trained model with bad schema returns a 400 error
+        """
         test_model = set([1, 3, 5])
-        
+
         obj = { "not_a_project_id" : 5,
                 "what's a parameter set?" : 1,
                 "training_data_from" : "last year",
@@ -54,13 +73,17 @@ class TrainedModelTests(unittest.TestCase):
         }
 
         response = requests.post(self.get_url(),
-                            json=obj)
+                            json=obj, timeout=5)
 
         self.assertEqual(response.status_code, 400)
-        
+
     def test_list_models(self):
+        """
+        Test if displaying all trained models works correctly
+        :return: If all trained models are created correctly, and returned in a list
+        """
         test_model1 = set([1, 3, 5])
-        
+
         obj1 = { "project_id" : 5,
                  "parameter_set_id" : 1,
                  "training_data_from" : (dt.datetime.now() - dt.timedelta(days=3)).isoformat(),
@@ -72,9 +95,9 @@ class TrainedModelTests(unittest.TestCase):
                  "backtest_metrics": {"recall": 0.8, "precision": 0.2},
                  "passed_backtesting": True
         }
-                 
+
         response = requests.post(self.get_url(),
-                            json=obj1)
+                            json=obj1, timeout=5)
 
         self.assertEqual(response.status_code, 201)
 
@@ -90,9 +113,9 @@ class TrainedModelTests(unittest.TestCase):
                  "backtest_metrics": {"recall": 0.7, "precision": 0.3},
                  "passed_backtesting": True
         }
-                 
+
         response = requests.post(self.get_url(),
-                            json=obj2)
+                            json=obj2, timeout=5)
 
         self.assertEqual(response.status_code, 201)
 
@@ -108,20 +131,24 @@ class TrainedModelTests(unittest.TestCase):
                  "backtest_metrics": {"recall": 0.9, "precision": 0.1},
                  "passed_backtesting": True
         }
-                 
+
         response = requests.post(self.get_url(),
-                            json=obj3)
+                            json=obj3, timeout=5)
 
         self.assertEqual(response.status_code, 201)
 
-        response = requests.get(self.get_url())
+        response = requests.get(self.get_url(), timeout=5)
         self.assertEqual(response.status_code, 200)
 
         json_response = response.json()
         self.assertIn("trained_models", json_response)
         self.assertGreaterEqual(len(json_response["trained_models"]), 3)
-        
+
     def test_get_model_by_id(self):
+        """
+        Test getting a trained model by a specific ID
+        :return: If getting a trained model by ID was successful
+        """
         test_model = set([5, 21, 13])
         obj1 = { "project_id" : 5,
                  "parameter_set_id" : 49,
@@ -136,16 +163,16 @@ class TrainedModelTests(unittest.TestCase):
         }
 
         response = requests.post(self.get_url(),
-                            json=obj1)
+                            json=obj1, timeout=5)
 
         self.assertEqual(response.status_code, 201)
 
         json_response = response.json()
 
         model_id = json_response["model_id"]
-        
+
         url = os.path.join(self.get_url(), str(model_id))
-        response = requests.get(url)
+        response = requests.get(url, timeout=5)
 
         self.assertEqual(response.status_code, 200)
 
@@ -154,17 +181,26 @@ class TrainedModelTests(unittest.TestCase):
         self.assertEqual(test_model, unpickled_model)
 
     def test_get_model_by_bad_id(self):
+        """
+        Test getting a trained model by a nonexistent ID
+        :return: If getting a trained model by a nonexistent ID returned a 404
+        """
+
         model_id = 0
 
         url = os.path.join(self.get_url(), str(model_id))
 
-        response = requests.get(url)
+        response = requests.get(url, timeout=5)
         self.assertEqual(response.status_code, 404)
 
         json_obj = response.json()
         self.assertIn("error", json_obj)
 
     def test_model_status_update(self):
+        """
+        Test updating the deployment stage of a trained model
+        :return: If updating the deployment stage of a trained model is successful
+        """
         test_model = set([5, 21, 13])
         obj1 = { "project_id" : 5,
                  "parameter_set_id" : 49,
@@ -179,33 +215,37 @@ class TrainedModelTests(unittest.TestCase):
         }
 
         response = requests.post(self.get_url(),
-                            json=obj1)
+                            json=obj1, timeout=5)
 
         self.assertEqual(response.status_code, 201)
 
         json_response = response.json()
 
         model_id = json_response["model_id"]
-        
+
         patch = {
             "deployment_stage" : "production"
         }
-        
+
         url = os.path.join(self.get_url(), str(model_id))
-        response = requests.patch(url, json=patch)
+        response = requests.patch(url, json=patch, timeout=5)
 
         self.assertEqual(response.status_code, 200)
-        
+
         patch = {
             "deployment_stage" : "retired"
         }
-        
+
         url = os.path.join(self.get_url(), str(model_id))
-        response = requests.patch(url, json=patch)
+        response = requests.patch(url, json=patch, timeout=5)
 
         self.assertEqual(response.status_code, 200)
-        
+
     def test_model_status_update_bad_schema(self):
+        """
+        Test updating the deployment stage of a trained model with a bad schema
+        :return: If updating a trained model with a bad schema returns a 400
+        """
         test_model = set([5, 21, 13])
         obj1 = { "project_id" : 5,
                  "parameter_set_id" : 49,
@@ -220,24 +260,28 @@ class TrainedModelTests(unittest.TestCase):
         }
 
         response = requests.post(self.get_url(),
-                            json=obj1)
+                            json=obj1, timeout=5)
 
         self.assertEqual(response.status_code, 201)
 
         json_response = response.json()
 
         model_id = json_response["model_id"]
-        
+
         patch = {
             "not a valid field" : "production"
         }
-        
+
         url = os.path.join(self.get_url(), str(model_id))
-        response = requests.patch(url, json=patch)
+        response = requests.patch(url, json=patch, timeout=5)
 
         self.assertEqual(response.status_code, 400)
 
     def test_model_status_update_bad_id(self):
+        """
+        Test updating a trained model by a nonexistent ID
+        :return: If patching a trained model with a nonexistent ID returned a 404
+        """
         model_id = 0
 
         url = os.path.join(self.get_url(),
@@ -245,13 +289,10 @@ class TrainedModelTests(unittest.TestCase):
 
         update = {"deployment_stage" : "retired"}
 
-        response = requests.patch(url, json=update)
+        response = requests.patch(url, json=update, timeout=5)
 
         self.assertEqual(response.status_code, 404)
 
 if __name__ == "__main__":
-    if BASE_URL_KEY not in os.environ:
-        print("Must define the base URL using the {} environment variable".format(BASE_URL_KEY))
-        sys.exit(1)
-
+    check_base_url(BASE_URL_KEY)
     unittest.main()

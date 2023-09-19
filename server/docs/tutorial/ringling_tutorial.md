@@ -23,17 +23,20 @@ This can be done in two ways:
 
 #### Python:
 ```python
+"""
+Create a new project to import into ringling
+"""
 import requests
 
 # Set the endpoint url for project creation
-base_url = "http://localhost:8888"
-object_url = "/v1/projects"
-request_url = base_url + object_url
+BASE_URL = "http://localhost:8888"
+OBJECT_URL = "/v1/projects"
+REQUEST_URL = BASE_URL + OBJECT_URL
 
-name_payload = {"project_name": "tutorial"}
+name_payload = {"project_name": "Tutorial Project"}
 
 # Create the project
-response = requests.post(request_url,
+response = requests.post(REQUEST_URL,
                          json=name_payload, timeout=5)
 
 # Make sure it worked
@@ -76,6 +79,15 @@ The following is the schema for Parameter Sets:
 Now that there is a project, an untrained model, or parameter set, should be created. For this example, we are using a Scikit-learn Pipeline that includes a standard scaler and logistic regression. 
 
 ```python
+"""
+Create a parameter set as a serialized Scikit-learn pipeline and put it into ringling
+"""
+import pickle
+import requests
+from sklearn.linear_model import LogisticRegression
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler
+
 import pickle
 import requests
 from sklearn.linear_model import LogisticRegression
@@ -83,12 +95,12 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 
 # Set the endpoint url for parameter set creation
-base_url = "http://localhost:8888"
-object_url = "/v1/parameter_sets"
-request_url = base_url + object_url
+BASE_URL = "http://localhost:8888"
+OBJECT_URL = "/v1/parameter_sets"
+REQUEST_URL = BASE_URL + OBJECT_URL
 
 # Set this to the project ID of the project you created earlier
-project_id = 3
+PROJECT_ID = 3
 
 # Create the pipeline
 pipeline = Pipeline([
@@ -99,16 +111,16 @@ pipeline = Pipeline([
 # Convert pipeline to a hexed pickle to store it as a string
 pickled_pipeline = pickle.dumps(pipeline).hex()
 
-param_payload = {"project_id": project_id,
+param_payload = {"project_id": PROJECT_ID,
                  "training_parameters": pickled_pipeline,
                  "is_active": True}
 
 # Create the parameter set
-response = requests.post(request_url,
-                         json=param_payload)
+response = requests.post(REQUEST_URL, json=param_payload, timeout=5)
 
 # Make sure it worked
 print(response.json())
+
 ```
 
 This should output (but potentially with a different ID):
@@ -150,29 +162,33 @@ The following is the schema for Trained Models:
 In this example, the pipeline is retrieved from Ringling. Then, it is evaluated using time based K-fold cross validation, before being trained on all available data and saved back to ringling as a Trained Model with its backtest metrics.
 
 ```python
+"""
+Train a model given a parameter set in Ringling
+"""
+import datetime
 import pickle
 import numpy as np
 import requests
 import pandas as pd
 from sklearn.metrics import accuracy_score, precision_score, recall_score, roc_auc_score
 from sklearn.model_selection import train_test_split
-import datetime
+
 
 # Set the endpoint url for parameter set get, and trained model create
-base_url = "http://localhost:8888"
-param_url = "/v1/parameter_sets"
-model_url = "/v1/trained_models"
-param_request_url = base_url + param_url
-model_request_url = base_url + model_url
+BASE_URL = "http://localhost:8888"
+PARAM_URL = "/v1/parameter_sets"
+MODEL_URL = "/v1/trained_models"
+PARAM_REQUEST_URL = BASE_URL + PARAM_URL
+MODEL_REQUEST_URL = BASE_URL + MODEL_URL
 
 # Set this to the ID of the project you created earlier
-project_id = 3
+PROJECT_ID = 3
 
 # Set this to the ID of the parameter set you created earlier
-parameter_set_id = 9
+PARAMETER_SET_ID = 9
 
 # Send the request, get the pickled parameter set
-request_url = param_request_url + "/" + str(parameter_set_id)
+request_url = PARAM_REQUEST_URL + "/" + str(PARAMETER_SET_ID)
 response = requests.get(request_url, timeout=5)
 pickled_pipeline = response.json()["training_parameters"]
 
@@ -189,19 +205,19 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_
 train_timestamp = datetime.datetime.now().isoformat()
 
 # Time based cross validation
-# Please note that while this dataset does not indicate times,
-# the following algorithm can be used assuming the dataframe is sorted by time to generate test metrics
+# Please note that while this dataset does not indicate times, the following algorithm
+# can be used assuming the dataframe is sorted by time to generate test metrics
 
-k_splits = 5
+K_SPLITS = 5
 vals = len(X)
-partition = vals//k_splits
+partition = vals // K_SPLITS
 
-accuracies = np.zeros(k_splits-1)
-precisions = np.zeros(k_splits-1)
-recalls = np.zeros(k_splits-1)
-areas_under_roc = np.zeros(k_splits-1)
+accuracies = np.zeros(K_SPLITS - 1)
+precisions = np.zeros(K_SPLITS - 1)
+recalls = np.zeros(K_SPLITS - 1)
+areas_under_roc = np.zeros(K_SPLITS - 1)
 
-for split in range(1, k_splits):
+for split in range(1, K_SPLITS):
     train_end = partition*split
     test_end = partition*(split+1)
     X_train = X.head(train_end)
@@ -236,10 +252,7 @@ print(f"Recall Standard Deviation: {recall_std:.5f}")
 print(f"AUROC: {area_under_roc:.5f}")
 print(f"AUROC Standard Deviation: {area_under_roc_std:.5f}")
 
-if area_under_roc>0.8:
-    passed_testing = True
-else:
-    passed_testing = False
+passed_testing = bool(area_under_roc > 0.8)
 
 # Prepare metrics to be sent to Ringling
 test_metrics = {
@@ -258,8 +271,8 @@ pipeline.fit(X, y)
 pipeline_object = pickle.dumps(pipeline).hex()
 
 # Save the model to Ringling
-model_payload = {"project_id": project_id,
-                 "parameter_set_id": parameter_set_id,
+model_payload = {"project_id": PROJECT_ID,
+                 "parameter_set_id": PARAMETER_SET_ID,
                  "training_data_from": "1988-01-01T00:00:00.000000",
                  "training_data_until": "1988-12-31T23:59:59.999999",
                  "model_object": pipeline_object,
@@ -269,7 +282,7 @@ model_payload = {"project_id": project_id,
                  "backtest_metrics": test_metrics,
                  "passed_backtesting": passed_testing}
 
-response = requests.post(model_request_url, json=model_payload, timeout=5)
+response = requests.post(MODEL_REQUEST_URL, json=model_payload, timeout=5)
 
 # Make sure it worked
 print(response.json())
@@ -330,31 +343,35 @@ The following is the schema for Model Tests:
 
 In this example, the model is retrieved from Ringling. Then, it is evaluated the test set before saved back to ringling as a Model Test with its test metrics.
 ```python
+"""
+Run tests on a Ringling model and put the results back
+"""
+import datetime
 import pickle
 import requests
 import pandas as pd
 from sklearn.metrics import accuracy_score, precision_score, recall_score, roc_auc_score
-import datetime
+
 
 # Set the endpoint url for parameter set creation
-base_url = "http://localhost:8888"
-model_url = "/v1/trained_models"
-model_test_url = "/v1/model_tests"
-model_request_url = base_url + model_url
-model_test_request_url = base_url + model_test_url
+BASE_URL = "http://localhost:8888"
+MODEL_URL = "/v1/trained_models"
+MODEL_TEST_URL = "/v1/model_tests"
+MODEL_REQUEST_URL = BASE_URL + MODEL_URL
+MODEL_TEST_REQUEST_URL = BASE_URL + MODEL_TEST_URL
 
 
 # Set this to the ID of the project you created earlier
-project_id = 3
+PROJECT_ID = 3
 
 # Set this to the ID of the parameter set you created earlier
-parameter_set_id = 9
+PARAMETER_SET_ID = 9
 
 # Set this to the ID of the trained model you created earlier
-trained_model_id = 8
+TRAINED_MODEL_ID = 8
 
 # Send the request, get the pickled trained model, and unpickle it
-request_url = model_request_url + "/" + str(trained_model_id)
+request_url = MODEL_REQUEST_URL + "/" + str(TRAINED_MODEL_ID)
 response = requests.get(request_url, timeout=5)
 pickled_model = response.json()["model_object"]
 model = pickle.loads(bytes.fromhex(pickled_model))
@@ -384,21 +401,17 @@ test_metrics = {
 }
 
 test_timestamp = datetime.datetime.now().isoformat()
-
-if area_under_roc>0.8:
-    passed_testing = True
-else:
-    passed_testing = False
+passed_testing = bool(area_under_roc > 0.8)
 
 # Save the model to Ringling
-test_payload = {"project_id": project_id,
-                "parameter_set_id": parameter_set_id,
-                "model_id": trained_model_id,
+test_payload = {"project_id": PROJECT_ID,
+                "parameter_set_id": PARAMETER_SET_ID,
+                "model_id": TRAINED_MODEL_ID,
                 "test_timestamp": test_timestamp,
                 "test_metrics": test_metrics,
                 "passed_testing": passed_testing}
 
-response = requests.post(model_test_request_url, json=test_payload, timeout=5)
+response = requests.post(MODEL_TEST_REQUEST_URL, json=test_payload, timeout=5)
 
 # Make sure it worked
 print(response.json())

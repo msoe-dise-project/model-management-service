@@ -1,3 +1,7 @@
+"""
+Database helper methods
+"""
+
 import os
 import sys
 
@@ -10,18 +14,25 @@ DEFAULT_PORT = 5432
 DEFAULT_DATABASE = "model_management_service"
 
 def check_environment_parameters():
+    """
+    Checks if host, username, and password environment variables were set up correctly
+    :return: None
+    """
     if HOST_KEY not in os.environ or \
        USERNAME_KEY not in os.environ or \
        PASSWORD_KEY not in os.environ:
-        msg = "Must specify environmental variables {}, {}, and {}.".format(HOST_KEY, USERNAME_KEY, PASSWORD_KEY)
+        msg = f"Must specify environmental variables {HOST_KEY}, " \
+              f"{USERNAME_KEY}, and {PASSWORD_KEY}."
         print(msg, file=sys.stderr)
         sys.exit(1)
-        
+
 def get_database_uri():
-    uri = "postgresql://{}:{}@{}:{}/{}".format(os.environ.get(USERNAME_KEY),
-                                               os.environ.get(PASSWORD_KEY),
-                                               os.environ.get(HOST_KEY),
-                                               os.environ.get(PORT_KEY, DEFAULT_PORT),
-                                               os.environ.get(DATABASE_KEY, DEFAULT_DATABASE))
-    
+    """
+    Get the URI for the database
+    :return: URI
+    """
+    uri = f"postgresql://{os.environ.get(USERNAME_KEY)}:{os.environ.get(PASSWORD_KEY)}" \
+          f"@{os.environ.get(HOST_KEY)}:{os.environ.get(PORT_KEY, DEFAULT_PORT)}" \
+          f"/{os.environ.get(DATABASE_KEY, DEFAULT_DATABASE)}"
+
     return uri
