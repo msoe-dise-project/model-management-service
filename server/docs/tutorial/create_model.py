@@ -24,8 +24,8 @@ PROJECT_ID = 3
 PARAMETER_SET_ID = 9
 
 # Send the request, get the pickled parameter set
-request_url = PARAM_REQUEST_URL + "/" + str(PARAMETER_SET_ID)
-response = requests.get(request_url, timeout=5)
+REQUEST_URL = PARAM_REQUEST_URL + "/" + str(PARAMETER_SET_ID)
+response = requests.get(REQUEST_URL, timeout=5)
 pickled_pipeline = response.json()["training_parameters"]
 
 pipeline = pickle.loads(bytes.fromhex(pickled_pipeline))

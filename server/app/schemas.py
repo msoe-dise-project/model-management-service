@@ -35,7 +35,7 @@ class ParameterSet:
         """
         Initialize the parameter set object
         :param project_id: The referenced project ID for the parameter set
-        :param training_parameters: The parameters for the parameter set, generally a pickled pipeline
+        :param training_parameters: The parameters for the parameter set, maybe a pickled pipeline
         :param is_active: If the parameter set is active or not
         :param parameter_set_id: The ID for the parameter set
         """
@@ -260,15 +260,15 @@ class CustomJSONProvider(DefaultJSONProvider):
         """
         if isinstance(obj, Project):
             return ProjectSchema().dump(obj)
-        elif isinstance(obj, ParameterSetPatch):
+        if isinstance(obj, ParameterSetPatch):
             return ParameterSetPatchSchema().dump(obj)
-        elif isinstance(obj, ParameterSet):
+        if isinstance(obj, ParameterSet):
             return ParameterSetSchema().dump(obj)
-        elif isinstance(obj, TrainedModel):
+        if isinstance(obj, TrainedModel):
             return TrainedModelSchema().dump(obj)
-        elif isinstance(obj, TrainedModelPatch):
+        if isinstance(obj, TrainedModelPatch):
             return TrainedModelPatchSchema().dump(obj)
-        elif isinstance(obj, ModelTest):
+        if isinstance(obj, ModelTest):
             return ModelTestSchema().dump(obj)
 
         return DefaultJSONProvider.default(obj)

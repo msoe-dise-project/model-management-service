@@ -2,14 +2,13 @@
 Run tests for the healthcheck service
 """
 import os
-import sys
 import unittest
 
 import requests
 
-BASE_URL_KEY = "BASE_URL"
-
 from test_utils import check_base_url
+
+BASE_URL_KEY = "BASE_URL"
 
 class HealthcheckTests(unittest.TestCase):
     """

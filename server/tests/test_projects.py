@@ -1,8 +1,8 @@
 """
 Run tests for Ringling projects
 """
+# pylint: disable=duplicate-code
 import os
-import sys
 import unittest
 
 import requests

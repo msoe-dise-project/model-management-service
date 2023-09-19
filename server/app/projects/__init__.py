@@ -2,10 +2,9 @@
 The project module
 Used to perform actions with regard to Ringling projects
 """
+import datetime as dt
 
 from flask import Blueprint
-
-import datetime as dt
 
 from flask import request
 from flask.json import jsonify

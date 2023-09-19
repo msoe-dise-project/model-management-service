@@ -60,7 +60,7 @@ def create_trained_model():
     conn.close()
 
     return jsonify({"model_id" : model_id}), 201
-    
+
 @blueprint.route('/v1/trained_models', methods=["GET"])
 def list_models():
     """
@@ -88,7 +88,7 @@ def list_models():
     conn.close()
 
     return jsonify({ "trained_models" : models })
-    
+
 @blueprint.route('/v1/trained_models/<int:model_id>', methods=["GET"])
 def get_model_by_id(model_id):
     """

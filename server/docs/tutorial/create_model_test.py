@@ -26,8 +26,8 @@ PARAMETER_SET_ID = 9
 TRAINED_MODEL_ID = 8
 
 # Send the request, get the pickled trained model, and unpickle it
-request_url = MODEL_REQUEST_URL + "/" + str(TRAINED_MODEL_ID)
-response = requests.get(request_url, timeout=5)
+REQUEST_URL = MODEL_REQUEST_URL + "/" + str(TRAINED_MODEL_ID)
+response = requests.get(REQUEST_URL, timeout=5)
 pickled_model = response.json()["model_object"]
 model = pickle.loads(bytes.fromhex(pickled_model))
 

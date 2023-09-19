@@ -1,8 +1,8 @@
 """
 Run tests for Ringling parameter sets
 """
+# pylint: disable=duplicate-code
 import os
-import sys
 import unittest
 
 import requests
@@ -110,8 +110,7 @@ class ParameterSetsTests(unittest.TestCase):
         json_response = response.json()
         self.assertIn("parameter_sets", json_response)
 
-        observed_param_ids = set([obj["parameter_set_id"]
-                                  for obj in json_response["parameter_sets"]])
+        observed_param_ids = {obj["parameter_set_id"] for obj in json_response["parameter_sets"]}
 
         # check that param_ids is a proper subset of observed_param_ids
         self.assertEqual(param_ids, observed_param_ids.intersection(param_ids))
@@ -236,7 +235,7 @@ class ParameterSetsTests(unittest.TestCase):
         self.assertIn("parameter_set_id", json_response2)
         self.assertEqual(json_response["parameter_set_id"], json_response2["parameter_set_id"])
         self.assertFalse(json_response2["is_active"])
-        
+
     def test_update_status_bad_schema(self):
         """
         Test updating the status of a parameter set with a bad schema

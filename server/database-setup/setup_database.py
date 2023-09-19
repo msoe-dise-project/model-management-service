@@ -27,7 +27,7 @@ DATABASE_NAME = "model_management_service"
 if __name__ == "__main__":
     for key in [HOST_KEY, USER_PASSWORD_KEY, ADMIN_PASSWORD_KEY]:
         if key not in os.environ:
-            msg = "Must specify environmental variable {}".format(key)
+            msg = f"Must specify environmental variable {key}"
             print(msg)
             sys.exit(1)
 
@@ -99,7 +99,8 @@ if __name__ == "__main__":
                         ");")
 
             cur.execute(f"DROP ROLE IF EXISTS {SERVICE_USER};")
-            cur.execute(f"CREATE USER {SERVICE_USER} WITH PASSWORD '{os.environ.get(USER_PASSWORD_KEY)}';")
+            cur.execute(f"CREATE USER {SERVICE_USER} WITH PASSWORD '"
+                        f"{os.environ.get(USER_PASSWORD_KEY)}';")
             cur.execute(f"GRANT SELECT, INSERT, UPDATE ON projects TO {SERVICE_USER};")
             cur.execute(f"GRANT SELECT, INSERT, UPDATE ON parameter_sets TO {SERVICE_USER};")
             cur.execute(f"GRANT SELECT, INSERT, UPDATE ON trained_models TO {SERVICE_USER};")

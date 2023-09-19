@@ -1,10 +1,10 @@
 """
 Run tests for Ringling trained models
 """
+# pylint: disable=duplicate-code
 import datetime as dt
 import pickle
 import os
-import sys
 import unittest
 
 import requests
@@ -18,6 +18,10 @@ class TrainedModelTests(unittest.TestCase):
     Testing suite for trained models
     """
     def get_url(self):
+        """
+        Get the trained model url
+        :return: The full trained model url
+        """
         return os.path.join(os.environ[BASE_URL_KEY], "v1/trained_models")
 
     def test_create_success(self):

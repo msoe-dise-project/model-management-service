@@ -1,16 +1,16 @@
 """
 Run tests for Ringling model tests
 """
+# pylint: disable=duplicate-code
 import datetime as dt
 import os
-import sys
 import unittest
 
 import requests
 
-BASE_URL_KEY = "BASE_URL"
-
 from test_utils import check_base_url
+
+BASE_URL_KEY = "BASE_URL"
 
 class ModelTestsTests(unittest.TestCase):
     """
