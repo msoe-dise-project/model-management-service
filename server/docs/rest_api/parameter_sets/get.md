@@ -29,7 +29,8 @@ Lists all parameter sets.
 				"model" : { "model_type" : "RandomForestClassifier", "n_estimators" : 100 },
 				"scaler" : { "type" : "StandardScaler", "with_mean" : true }
 			},
-			"is_active" : false
+			"is_active" : false,
+			"metadata": {"meta1": 1, "meta2": 2}
 		},
 		{
 			"project_id" : 1,
@@ -38,7 +39,8 @@ Lists all parameter sets.
 				"model" : { "model_type" : "SGDClassifier", "alpha" : 0.01, "loss" : "log_loss" },
 				"scaler" : { "type" : "StandardScaler", "with_mean" : true }
 			},
-			"is_active" : true
+			"is_active" : true,
+			"metadata": {"meta1": 1, "meta2": 2}
 		}
 	 ]
 }

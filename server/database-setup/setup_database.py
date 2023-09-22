@@ -54,7 +54,8 @@ if __name__ == "__main__":
 
             cur.execute("CREATE TABLE projects ("
                         "project_id integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY, "
-                        "project_name text NOT NULL "
+                        "project_name text NOT NULL,  "
+                        "metadata JSONB NOT NULL "
                         ");")
 
             cur.execute("DROP TABLE IF EXISTS parameter_sets;")
@@ -63,7 +64,8 @@ if __name__ == "__main__":
                         "project_id integer NOT NULL, "
                         "parameter_set_id integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY, "
                         "training_parameters JSONB NOT NULL, "
-                        "is_active boolean NOT NULL "
+                        "is_active boolean NOT NULL, "
+                        "metadata JSONB NOT NULL "
                         ");")
 
             cur.execute("DROP TABLE IF EXISTS trained_models;")
@@ -83,7 +85,8 @@ if __name__ == "__main__":
                         "deployment_stage model_deployment_stage NOT NULL, "
                         "backtest_timestamp timestamp NOT NULL, "
                         "backtest_metrics JSONB NOT NULL, "
-                        "passed_backtesting bool NOT NULL "
+                        "passed_backtesting bool NOT NULL, "
+                        "metadata JSONB NOT NULL "
                         ");")
 
             cur.execute("DROP TABLE IF EXISTS model_tests;")
@@ -95,7 +98,8 @@ if __name__ == "__main__":
                         "test_id integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY, "  
                         "test_timestamp timestamp NOT NULL, "
                         "test_metrics JSONB NOT NULL, "
-                        "passed_testing bool NOT NULL "
+                        "passed_testing bool NOT NULL, "
+                        "metadata JSONB NOT NULL "
                         ");")
 
             cur.execute(f"DROP ROLE IF EXISTS {SERVICE_USER};")

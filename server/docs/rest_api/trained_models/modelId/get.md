@@ -21,6 +21,7 @@ Access a single trained model.
 
 ```json
 {
+	"metadata": {"meta1": 1, "meta2": 2},
 	"project_id" : 1,
 	"parameter_set_id" : 1,
 	"model_id" : 1, 

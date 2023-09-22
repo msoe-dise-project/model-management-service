@@ -38,8 +38,8 @@ def create_trained_model():
             query = "INSERT INTO trained_models (project_id, parameter_set_id, " \
                     "training_data_from, training_data_until, model_object, train_timestamp, " \
                     "deployment_stage, backtest_timestamp, " \
-                    "backtest_metrics, passed_backtesting) " + \
-                    "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s) " + \
+                    "backtest_metrics, passed_backtesting, metadata) " + \
+                    "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) " + \
                     "RETURNING model_id"
 
             cur.execute(query,
@@ -52,7 +52,9 @@ def create_trained_model():
                          trained_model.deployment_stage,
                          trained_model.backtest_timestamp,
                          Json(trained_model.backtest_metrics),
-                         trained_model.passed_backtesting))
+                         trained_model.passed_backtesting,
+                         Json(trained_model.metadata))
+                        )
 
             model_id = cur.fetchone()[0]
 
@@ -73,16 +75,16 @@ def list_models():
             cur.execute('SELECT model_id, project_id, parameter_set_id, '
                         'training_data_from, training_data_until, '
                         'train_timestamp, deployment_stage, model_object, backtest_timestamp, '
-                        'backtest_metrics, passed_backtesting'
+                        'backtest_metrics, passed_backtesting, metadata'
                         ' FROM trained_models')
 
             models = [
                 TrainedModel(project_id, parameter_set_id, data_start, data_end, model_object,
                              train_timestamp, deployment_stage, backtest_timestamp,
-                             backtest_metrics, passed_backtesting, model_id)
+                             backtest_metrics, passed_backtesting, metadata, model_id)
                 for model_id, project_id, parameter_set_id, data_start,
                 data_end, train_timestamp, deployment_stage, model_object, backtest_timestamp,
-                backtest_metrics, passed_backtesting in cur
+                backtest_metrics, passed_backtesting, metadata in cur
             ]
 
     conn.close()
@@ -102,7 +104,7 @@ def get_model_by_id(model_id):
             query = "SELECT model_id, project_id, parameter_set_id, " \
                     "training_data_from, training_data_until, " \
                     "model_object, train_timestamp, deployment_stage, " \
-                    "backtest_timestamp, backtest_metrics, passed_backtesting " + \
+                    "backtest_timestamp, backtest_metrics, passed_backtesting, metadata " + \
                     "FROM trained_models WHERE model_id = %s"
             print(query)
             cur.execute(query, (model_id,))
@@ -112,11 +114,11 @@ def get_model_by_id(model_id):
 
             model_id, project_id, parameter_set_id, data_start, data_end, \
                 model_object, train_timestamp, deployment_stage, \
-                backtest_timestamp, backtest_metrics, passed_backtesting = result
+                backtest_timestamp, backtest_metrics, passed_backtesting, metadata = result
             model = TrainedModel(project_id, parameter_set_id, data_start,
                                  data_end, model_object, train_timestamp,
                                  deployment_stage, backtest_timestamp,
-                                 backtest_metrics, passed_backtesting, model_id)
+                                 backtest_metrics, passed_backtesting, metadata, model_id)
 
     conn.close()
 

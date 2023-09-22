@@ -23,10 +23,12 @@ Lists all projects.
 {
     "projects": [
 	 	{
+			"metadata": {"meta1": 1, "meta2": 2},
 			"project_name" : "Fraud Detection",
 			"project_id" : 1
 		},
 		{
+			"metadata": {"meta1": 1, "meta2": 2},
 			"project_name" : "Recommendation System",
 			"project_id" : 2
 		}

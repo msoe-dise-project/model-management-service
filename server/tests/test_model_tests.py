@@ -34,7 +34,8 @@ class ModelTestsTests(unittest.TestCase):
                 "model_id" : 2,
                 "test_timestamp" : dt.datetime.now().isoformat(),
                 "test_metrics" : { "recall" : 0.8, "precision" : 0.2 },
-                "passed_testing" : True
+                "passed_testing" : True,
+                "metadata": {"meta1": 1, "meta2": 2}
               }
 
         response = requests.post(self.get_url(),
@@ -58,7 +59,8 @@ class ModelTestsTests(unittest.TestCase):
                 "oops" : 2,
                 "test_timestamp" : "today",
                 "test_metrics" : { "recall" : 0.8, "precision" : 0.2 },
-                "passed_testing" : None
+                "passed_testing" : None,
+                "metadata": {"meta1": 1, "meta2": 2}
               }
 
         response = requests.post(self.get_url(),
@@ -77,7 +79,8 @@ class ModelTestsTests(unittest.TestCase):
                 "model_id" : 2,
                 "test_timestamp" : dt.datetime.now().isoformat(),
                 "test_metrics" : { "recall" : 0.8, "precision" : 0.2 },
-                "passed_testing" : True
+                "passed_testing" : True,
+                "metadata": {"meta1": 1, "meta2": 2}
               }
 
         response = requests.post(self.get_url(),
@@ -91,7 +94,8 @@ class ModelTestsTests(unittest.TestCase):
                 "model_id" : 3,
                 "test_timestamp" : dt.datetime.now().isoformat(),
                 "test_metrics" : { "recall" : 0.8, "precision" : 0.2 },
-                "passed_testing" : True
+                "passed_testing" : True,
+                "metadata": {"meta1": 1, "meta2": 2}
               }
 
         response = requests.post(self.get_url(),
@@ -105,7 +109,8 @@ class ModelTestsTests(unittest.TestCase):
                 "model_id" : 53,
                 "test_timestamp" : dt.datetime.now().isoformat(),
                 "test_metrics" : { "recall" : 0.8, "precision" : 0.2 },
-                "passed_testing" : True
+                "passed_testing" : True,
+                "metadata": {"meta1": 1, "meta2": 2}
               }
 
         response = requests.post(self.get_url(),
@@ -131,7 +136,8 @@ class ModelTestsTests(unittest.TestCase):
                 "model_id" : 2,
                 "test_timestamp" : dt.datetime.now().isoformat(),
                 "test_metrics" : { "recall" : 0.8, "precision" : 0.2 },
-                "passed_testing" : True
+                "passed_testing" : True,
+                "metadata": {"meta1": 1, "meta2": 2}
               }
 
         response = requests.post(self.get_url(),

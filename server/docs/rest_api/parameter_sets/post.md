@@ -15,7 +15,8 @@ Creates a parameter set and assigns a unique id.
 {
 	"parameter_set_id" : "integer",
 	"training_parameters" : "object",
-	"is_active" : "boolean"
+	"is_active" : "boolean",
+  	"metadata": "object"
 }
 ```
 

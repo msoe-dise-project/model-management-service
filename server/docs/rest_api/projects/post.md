@@ -13,7 +13,8 @@ Creates a project and assigns a unique id.
 
 ```json
 {
-		"project_name" : "string"
+		"project_name" : "string",
+  		"metadata": "object"
 }
 ```
 
