@@ -39,7 +39,8 @@ def create_project():
             result = cur.fetchone()
             if result is not None:
                 return jsonify({"error": f"Project {project.project_name} already exists"}), 400
-            cur.execute('INSERT INTO projects (project_name, metadata) VALUES (%s, %s) RETURNING project_id',
+            cur.execute('INSERT INTO projects (project_name, metadata) '
+                        'VALUES (%s, %s) RETURNING project_id',
                         (project.project_name, Json(project.metadata)))
             project_id = cur.fetchone()[0]
 
