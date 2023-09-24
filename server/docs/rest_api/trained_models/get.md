@@ -40,7 +40,8 @@ Lists all trained models.
 			"training_data_until" : "2023-03-18T21:00:07.274173",
 			"train_timestamp" : "2023-03-18T21:00:07.274173",
 			"deployment_stage" : "testing",
-			"model_object" : "8004950b000000000000008f94284b154b0d4b05902e"
+			"model_object" : "8004950b000000000000008f94284b154b0d4b05902e",
+			"metadata": {"meta1": 1, "meta2": 2}
 		},
 		{
 			"project_id" : 1,
@@ -56,7 +57,8 @@ Lists all trained models.
 			"training_data_until" : "2023-03-18T21:00:07.274173",
 			"train_timestamp" : "2023-03-18T21:00:07.274173",
 			"deployment_stage" : "production",
-			"model_object" : "8004950b000000000000008f94284b154b0d4b05902e"
+			"model_object" : "8004950b000000000000008f94284b154b0d4b05902e",
+			"metadata": {"meta1": 1, "meta2": 2}
 		},
 		{
 			"project_id" : 1,
@@ -72,7 +74,8 @@ Lists all trained models.
 			"training_data_until" : "2023-03-18T21:00:07.274173",
 			"train_timestamp" : "2023-03-18T21:00:07.274173",
 			"deployment_stage" : "retired",
-			"model_object" : "8004950b000000000000008f94284b154b0d4b05902e"
+			"model_object" : "8004950b000000000000008f94284b154b0d4b05902e",
+			"metadata": {"meta1": 1, "meta2": 2}
 		}
 	 ]
 }

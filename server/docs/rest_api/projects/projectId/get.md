@@ -21,6 +21,7 @@ Access a single project
 
 ```json
 {
+	"metadata": {"meta1": 1, "meta2": 2},
 	"project_name" : "Fraud Detection",
 	"project_id" : 1
 }

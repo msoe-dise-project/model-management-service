@@ -28,3 +28,6 @@ The table stores the date/time of the test, the test results, and a flag indicat
 ## Note on Object Serialization
 JSON is used by the REST API to exchange data.  JSON does not support a binary or bytes type, so strings are used to store the serialized objects.  These values are stored directly in the database as text.  It might be better to store the serialized objects as binary strings in the database (e.g., using the bytea type).
 
+## Metadata
+Every object also supports using JSON metadata, which can be passed in as an empty dictionary if it is unused. Otherwise, it can be used to store any additional information needed.
+

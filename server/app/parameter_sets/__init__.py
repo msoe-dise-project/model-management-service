@@ -38,11 +38,13 @@ def create_parameter_set():
     uri = get_database_uri()
     with psycopg2.connect(uri) as conn:
         with conn.cursor() as cur:
-            cur.execute('INSERT INTO parameter_sets (project_id, training_parameters, is_active)'
-                        ' VALUES (%s, %s, %s) RETURNING parameter_set_id',
+            cur.execute('INSERT INTO parameter_sets (project_id, training_parameters, '
+                        'is_active, metadata)'
+                        ' VALUES (%s, %s, %s, %s) RETURNING parameter_set_id',
                         (parameter_set.project_id,
                          Json(parameter_set.training_parameters),
-                         parameter_set.is_active))
+                         parameter_set.is_active,
+                         Json(parameter_set.metadata)))
 
             parameter_set_id = cur.fetchone()[0]
 
@@ -61,11 +63,11 @@ def list_parameter_sets():
     with psycopg2.connect(uri) as conn:
         with conn.cursor() as cur:
             cur.execute('SELECT parameter_set_id, project_id, '
-                        'training_parameters, is_active FROM parameter_sets')
+                        'training_parameters, is_active, metadata FROM parameter_sets')
 
             parameter_sets = [
-                ParameterSet(project_id, params, is_active, parameter_set_id) \
-                for parameter_set_id, project_id, params, is_active in cur
+                ParameterSet(project_id, params, is_active, metadata, parameter_set_id) \
+                for parameter_set_id, project_id, params, is_active, metadata in cur
             ]
 
     conn.close()
@@ -83,14 +85,14 @@ def get_parameter_set(parameter_set_id):
     with psycopg2.connect(uri) as conn:
         with conn.cursor() as cur:
             cur.execute('SELECT parameter_set_id, project_id, training_parameters,'
-                        ' is_active FROM parameter_sets WHERE parameter_set_id = %s',
+                        ' is_active, metadata FROM parameter_sets WHERE parameter_set_id = %s',
                         (parameter_set_id,))
 
             result = cur.fetchone()
             if result is None:
                 return jsonify({"error": f"ID {parameter_set_id} not found"}), 404
-            params_id, project_id, params, is_active = result
-            obj = ParameterSet(project_id, params, is_active, params_id)
+            params_id, project_id, params, is_active, metadata = result
+            obj = ParameterSet(project_id, params, is_active, metadata, params_id)
 
     conn.close()
 

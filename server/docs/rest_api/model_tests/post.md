@@ -18,7 +18,8 @@ Creates a model test and assigns a unique id.
 	"model_id" : "integer",
 	"test_timestamp" : "ISO-8601 formatted timestamp",
 	"test_metrics" : "object",
-	"passed_testing" : "boolean"
+	"passed_testing" : "boolean",
+	"metadata": "object"
 }
 ```
 
@@ -31,7 +32,8 @@ Creates a model test and assigns a unique id.
 	"model_id" : 1,
 	"test_timestamp" : "2023-03-18T21:00:07.274173",
 	"test_metrics" : { "precision" : 0.97, "recall" : 0.95 },
-	"passed_testing" : true
+	"passed_testing" : true,
+	"metadata": {"meta1": 1, "meta2": 2}
 }
 ```
 

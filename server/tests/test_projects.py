@@ -27,7 +27,9 @@ class ProjectsTests(unittest.TestCase):
         Test if a project can be created successfully
         :return: If a project with the correct schema can be successfully created
         """
-        obj = { "project_name" : "test" }
+        obj = { "project_name" : "test",
+                "metadata": {"meta1": 1, "meta2": 2}
+                }
 
         response = requests.post(self.get_url(),
                             json=obj, timeout=5)
@@ -44,7 +46,9 @@ class ProjectsTests(unittest.TestCase):
         Test if a project with a bad schema generates the correct response
         :return: If a project with a bad schema returns a 400 error
         """
-        obj = { "this is a test" : "test" }
+        obj = { "this is a test" : "test",
+                "metadata": {"meta1": 1, "meta2": 2}
+                }
 
         response = requests.post(self.get_url(),
                             json=obj, timeout=5)
@@ -65,7 +69,9 @@ class ProjectsTests(unittest.TestCase):
         Test getting a project by a specific ID
         :return: If getting a project by ID was successful
         """
-        obj = { "project_name" : "test2" }
+        obj = { "project_name" : "test2",
+                "metadata": {"meta1": 1, "meta2": 2}
+                }
 
         response = requests.post(self.get_url(),
                             json=obj, timeout=5)
@@ -107,7 +113,9 @@ class ProjectsTests(unittest.TestCase):
         Test creating a project with an existing name
         :return: If creating a project by an already existing name returns a 400
         """
-        obj = { "project_name" : "test" }
+        obj = { "project_name" : "test",
+                "metadata": {"meta1": 1, "meta2": 2}
+                }
 
         response = requests.post(self.get_url(),
                             json=obj, timeout=5)

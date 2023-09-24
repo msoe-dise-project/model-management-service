@@ -34,8 +34,8 @@ def create_model_test():
     with psycopg2.connect(uri) as conn:
         with conn.cursor() as cur:
             query = "INSERT INTO model_tests (project_id, parameter_set_id, " \
-                    "model_id, test_timestamp, test_metrics, passed_testing) " + \
-                    "VALUES (%s, %s, %s, %s, %s, %s) " + \
+                    "model_id, test_timestamp, test_metrics, passed_testing, metadata) " + \
+                    "VALUES (%s, %s, %s, %s, %s, %s, %s) " + \
                     "RETURNING test_id"
 
             cur.execute(query,
@@ -44,7 +44,9 @@ def create_model_test():
                          model_test.model_id,
                          model_test.test_timestamp,
                          Json(model_test.test_metrics),
-                         model_test.passed_testing))
+                         model_test.passed_testing,
+                         Json(model_test.metadata)),
+                        )
 
             test_id = cur.fetchone()[0]
 
@@ -62,13 +64,14 @@ def list_model_tests():
     with psycopg2.connect(uri) as conn:
         with conn.cursor() as cur:
             cur.execute('SELECT test_id, project_id, parameter_set_id, '
-                        'model_id, test_timestamp, test_metrics, passed_testing FROM model_tests')
+                        'model_id, test_timestamp, test_metrics, '
+                        'passed_testing, metadata FROM model_tests')
 
             tests = [
                 ModelTest(project_id, parameter_set_id, model_id,
-                          test_timestamp, test_metrics, passed_testing, test_id) \
+                          test_timestamp, test_metrics, passed_testing, metadata, test_id) \
                 for test_id, project_id, parameter_set_id, model_id,
-                test_timestamp, test_metrics, passed_testing in cur
+                test_timestamp, test_metrics, passed_testing, metadata in cur
             ]
 
     conn.close()
@@ -86,16 +89,16 @@ def get_model_test_by_id(test_id):
     with psycopg2.connect(uri) as conn:
         with conn.cursor() as cur:
             query = "SELECT test_id, project_id, parameter_set_id, " \
-                    "model_id, test_timestamp, test_metrics, passed_testing " + \
+                    "model_id, test_timestamp, test_metrics, passed_testing, metadata " + \
                     "FROM model_tests WHERE test_id = %s"
             cur.execute(query, (test_id,))
             result = cur.fetchone()
             if result is None:
                 return jsonify({"error": f"ID {test_id} not found"}), 404
             test_id, project_id, parameter_set_id, \
-                model_id, test_timestamp, test_metrics, passed_testing = result
+                model_id, test_timestamp, test_metrics, passed_testing, metadata = result
             test = ModelTest(project_id, parameter_set_id, model_id,
-                             test_timestamp, test_metrics, passed_testing, test_id)
+                             test_timestamp, test_metrics, passed_testing, metadata, test_id)
 
     conn.close()
 

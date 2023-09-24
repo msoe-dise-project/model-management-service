@@ -29,7 +29,9 @@ class ParameterSetsTests(unittest.TestCase):
         """
         obj = { "project_id" : 5,
                 "training_parameters" : { "param1" : 1, "param2" : "2" },
-                "is_active" : True }
+                "is_active" : True,
+                "metadata": {"meta1": 1, "meta2": 2}
+                }
 
         response = requests.post(self.get_url(),
                             json=obj, timeout=5)
@@ -48,7 +50,7 @@ class ParameterSetsTests(unittest.TestCase):
         """
         obj = { "this is a test" : 5,
                 "and another test" : { "param1" : 1, "param2" : "2" },
-                "test" : True }
+                "test" : True, }
 
         response = requests.post(self.get_url(),
                             json=obj, timeout=5)
@@ -64,7 +66,9 @@ class ParameterSetsTests(unittest.TestCase):
 
         obj = { "project_id" : 5,
                 "training_parameters" : { "param1" : 1, "param2" : "2" },
-                "is_active" : True }
+                "is_active" : True,
+                "metadata": {"meta1": 1, "meta2": 2}
+                }
 
         response = requests.post(self.get_url(),
                             json=obj, timeout=5)
@@ -77,7 +81,8 @@ class ParameterSetsTests(unittest.TestCase):
 
         obj = { "project_id" : 6,
                 "training_parameters" : { "param1" : 1, "param2" : "2" },
-                "is_active" : True
+                "is_active" : True,
+                "metadata": {"meta1": 1, "meta2": 2}
         }
 
         response = requests.post(self.get_url(),
@@ -91,7 +96,8 @@ class ParameterSetsTests(unittest.TestCase):
 
         obj = { "project_id" : 7,
                 "training_parameters" : { "param1" : 1, "param2" : "2" },
-                "is_active" : False
+                "is_active" : False,
+                "metadata": {"meta1": 1, "meta2": 2}
         }
 
         response = requests.post(self.get_url(),
@@ -122,7 +128,8 @@ class ParameterSetsTests(unittest.TestCase):
         """
         obj = { "project_id" : 5,
                 "training_parameters" : { "param1" : 1, "param2" : "2" },
-                "is_active" : False
+                "is_active" : False,
+                "metadata": {"meta1": 1, "meta2": 2}
         }
 
         response = requests.post(self.get_url(),
@@ -146,6 +153,7 @@ class ParameterSetsTests(unittest.TestCase):
         self.assertEqual(obj["project_id"], json_response2["project_id"])
         self.assertEqual(obj["training_parameters"], json_response2["training_parameters"])
         self.assertEqual(obj["is_active"], json_response2["is_active"])
+        self.assertEqual(obj["metadata"], json_response2["metadata"])
 
     def test_get_by_id_no_end(self):
         """
@@ -154,7 +162,8 @@ class ParameterSetsTests(unittest.TestCase):
         """
         obj = { "project_id" : 5,
                 "training_parameters" : { "param1" : 1, "param2" : "2" },
-                "is_active" : True
+                "is_active" : True,
+                "metadata": {"meta1": 1, "meta2": 2}
         }
 
         response = requests.post(self.get_url(),
@@ -178,6 +187,7 @@ class ParameterSetsTests(unittest.TestCase):
         self.assertEqual(obj["project_id"], json_response2["project_id"])
         self.assertEqual(obj["training_parameters"], json_response2["training_parameters"])
         self.assertEqual(obj["is_active"], json_response2["is_active"])
+        self.assertEqual(obj["metadata"], json_response2["metadata"])
 
     def test_get_by_bad_id(self):
         """
@@ -201,7 +211,8 @@ class ParameterSetsTests(unittest.TestCase):
         """
         obj = { "project_id" : 5,
                 "training_parameters" : { "param1" : 1, "param2" : "2" },
-                "is_active" : False
+                "is_active" : False,
+                "metadata": {"meta1": 1, "meta2": 2}
         }
 
         response = requests.post(self.get_url(),
@@ -243,7 +254,8 @@ class ParameterSetsTests(unittest.TestCase):
         """
         obj = { "project_id" : 5,
                 "training_parameters" : { "param1" : 1, "param2" : "2" },
-                "is_active" : False
+                "is_active" : False,
+                "metadata": {"meta1": 1, "meta2": 2}
         }
 
         response = requests.post(self.get_url(),

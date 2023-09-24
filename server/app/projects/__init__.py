@@ -39,8 +39,9 @@ def create_project():
             result = cur.fetchone()
             if result is not None:
                 return jsonify({"error": f"Project {project.project_name} already exists"}), 400
-            cur.execute('INSERT INTO projects (project_name) VALUES (%s) RETURNING project_id',
-                        (project.project_name,))
+            cur.execute('INSERT INTO projects (project_name, metadata) '
+                        'VALUES (%s, %s) RETURNING project_id',
+                        (project.project_name, Json(project.metadata)))
             project_id = cur.fetchone()[0]
 
     conn.commit()
@@ -57,11 +58,11 @@ def list_projects():
     uri = get_database_uri()
     with psycopg2.connect(uri) as conn:
         with conn.cursor() as cur:
-            cur.execute("SELECT project_id, project_name FROM projects")
+            cur.execute("SELECT project_id, project_name, metadata FROM projects")
 
             projects = [
-                Project(_name, _id) \
-                for _id, _name in cur
+                Project(_name,  _metadata, _id,) \
+                for _id, _name, _metadata in cur
             ]
 
     conn.commit()
@@ -79,14 +80,14 @@ def get_project(project_id):
     uri = get_database_uri()
     with psycopg2.connect(uri) as conn:
         with conn.cursor() as cur:
-            cur.execute("SELECT project_id, project_name FROM projects "
+            cur.execute("SELECT project_id, project_name, metadata FROM projects "
                         "WHERE project_id = %s",
                         (project_id,))
             result = cur.fetchone()
             if result is None:
                 return jsonify({"error": f"ID {project_id} not found"}), 404
-            _id, _name = result
-            project = Project(_name, _id)
+            _id, _name, _metadata = result
+            project = Project(_name, _metadata, _id)
 
     conn.commit()
     conn.close()

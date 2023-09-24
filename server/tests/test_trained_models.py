@@ -40,7 +40,8 @@ class TrainedModelTests(unittest.TestCase):
                 "deployment_stage" : "testing",
                 "backtest_timestamp": dt.datetime.now().isoformat(),
                 "backtest_metrics": {"recall": 0.8, "precision": 0.2},
-                "passed_backtesting": True
+                "passed_backtesting": True,
+                "metadata": {"meta1": 1, "meta2": 2}
         }
 
         response = requests.post(self.get_url(),
@@ -69,7 +70,8 @@ class TrainedModelTests(unittest.TestCase):
                 "deployment_stage" : "testing",
                 "we're testing now?": dt.datetime.now().isoformat(),
                 "test_metrics": {"recall": 0.8, "precision": 0.2},
-                "passed_testing": True
+                "passed_testing": True,
+                "metadata": {"meta1": 1, "meta2": 2}
         }
 
         response = requests.post(self.get_url(),
@@ -93,7 +95,8 @@ class TrainedModelTests(unittest.TestCase):
                  "deployment_stage" : "testing",
                  "backtest_timestamp": dt.datetime.now().isoformat(),
                  "backtest_metrics": {"recall": 0.8, "precision": 0.2},
-                 "passed_backtesting": True
+                 "passed_backtesting": True,
+                 "metadata": {"meta1": 1, "meta2": 2}
         }
 
         response = requests.post(self.get_url(),
@@ -111,7 +114,8 @@ class TrainedModelTests(unittest.TestCase):
                  "deployment_stage" : "testing",
                  "backtest_timestamp": dt.datetime.now().isoformat(),
                  "backtest_metrics": {"recall": 0.7, "precision": 0.3},
-                 "passed_backtesting": True
+                 "passed_backtesting": True,
+                 "metadata": {"meta1": 1, "meta2": 2}
         }
 
         response = requests.post(self.get_url(),
@@ -129,7 +133,8 @@ class TrainedModelTests(unittest.TestCase):
                  "deployment_stage" : "testing",
                  "backtest_timestamp": dt.datetime.now().isoformat(),
                  "backtest_metrics": {"recall": 0.9, "precision": 0.1},
-                 "passed_backtesting": True
+                 "passed_backtesting": True,
+                 "metadata": {"meta1": 1, "meta2": 2}
         }
 
         response = requests.post(self.get_url(),
@@ -159,7 +164,8 @@ class TrainedModelTests(unittest.TestCase):
                  "deployment_stage" : "testing",
                  "backtest_timestamp": dt.datetime.now().isoformat(),
                  "backtest_metrics": {"recall": 0.8, "precision": 0.2},
-                 "passed_backtesting": True
+                 "passed_backtesting": True,
+                 "metadata": {"meta1": 1, "meta2": 2}
         }
 
         response = requests.post(self.get_url(),
@@ -211,7 +217,8 @@ class TrainedModelTests(unittest.TestCase):
                  "deployment_stage" : "testing",
                  "backtest_timestamp": dt.datetime.now().isoformat(),
                  "backtest_metrics": {"recall": 0.8, "precision": 0.2},
-                 "passed_backtesting": True
+                 "passed_backtesting": True,
+                 "metadata": {"meta1": 1, "meta2": 2}
         }
 
         response = requests.post(self.get_url(),
@@ -256,7 +263,8 @@ class TrainedModelTests(unittest.TestCase):
                  "deployment_stage" : "testing",
                  "backtest_timestamp": dt.datetime.now().isoformat(),
                  "backtest_metrics": {"recall": 0.8, "precision": 0.2},
-                 "passed_backtesting": True
+                 "passed_backtesting": True,
+                 "metadata": {"meta1": 1, "meta2": 2}
         }
 
         response = requests.post(self.get_url(),

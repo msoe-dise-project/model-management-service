@@ -18,31 +18,36 @@ class Project:
     """
     Object for the project class fields
     """
-    def __init__(self, project_name, project_id=None):
+    def __init__(self, project_name, metadata, project_id=None):
         """
         Initialize the project
         :param project_name: The name of the project
+        :param metadata: The metadata for the project
         :param project_id: The ID of the project
+
         """
         self.project_name = project_name
         self.project_id = project_id
+        self.metadata = metadata
 
 class ParameterSet:
     """
     Object for Parameter Set fields
     """
-    def __init__(self, project_id, training_parameters, is_active, parameter_set_id=None):
+    def __init__(self, project_id, training_parameters, is_active, metadata, parameter_set_id=None):
         """
         Initialize the parameter set object
         :param project_id: The referenced project ID for the parameter set
         :param training_parameters: The parameters for the parameter set, maybe a pickled pipeline
         :param is_active: If the parameter set is active or not
+        :param metadata: The metadata for the parameter set
         :param parameter_set_id: The ID for the parameter set
         """
         self.project_id = project_id
         self.training_parameters = training_parameters
         self.parameter_set_id = parameter_set_id
         self.is_active = is_active
+        self.metadata = metadata
 
 class ParameterSetPatch:
     """
@@ -57,6 +62,7 @@ class ParameterSetPatch:
         self.is_active = is_active
         self.parameter_set_id = parameter_set_id
 
+
 class TrainedModel:
     """
     Object for trained models fields
@@ -64,7 +70,7 @@ class TrainedModel:
     def __init__(self, project_id, parameter_set_id, training_data_from,
                  training_data_until, model_object,
                  train_timestamp, deployment_stage, backtest_timestamp,
-                 backtest_metrics, passed_backtesting, model_id=None):
+                 backtest_metrics, passed_backtesting, metadata, model_id=None):
         """
         Initialize a new trained model
         :param project_id: The project ID of the trained model
@@ -77,6 +83,7 @@ class TrainedModel:
         :param backtest_timestamp: The timestamp for when the model was backtested
         :param backtest_metrics: The metrics for backtesting
         :param passed_backtesting: If the model passed backtesting or not
+        :param metadata: The metadata for the trained model
         :param model_id: The ID for the model
         """
         self.project_id = project_id
@@ -89,7 +96,9 @@ class TrainedModel:
         self.backtest_timestamp = backtest_timestamp
         self.backtest_metrics = backtest_metrics
         self.passed_backtesting = passed_backtesting
+        self.metadata = metadata
         self.model_id = model_id
+
 
 class TrainedModelPatch:
     """
@@ -109,7 +118,7 @@ class ModelTest:
     Object for model test fields
     """
     def __init__(self, project_id, parameter_set_id, model_id, test_timestamp,
-                 test_metrics, passed_testing, test_id=None):
+                 test_metrics, passed_testing, metadata, test_id=None):
         """
         Initialize a new model test
         :param project_id: The project ID referenced by the model test
@@ -118,6 +127,7 @@ class ModelTest:
         :param test_timestamp: The timestamp of the test
         :param test_metrics: Performance metrics for testing
         :param passed_testing: If the model passed testing or not
+        :param metadata: The metadata for the model test
         :param test_id: The ID for the test
         """
         self.test_id = test_id
@@ -127,6 +137,7 @@ class ModelTest:
         self.test_timestamp = test_timestamp
         self.test_metrics = test_metrics
         self.passed_testing = passed_testing
+        self.metadata = metadata
 
 class ProjectSchema(Schema):
     """
@@ -134,6 +145,7 @@ class ProjectSchema(Schema):
     """
     project_id = fields.Integer()
     project_name = fields.String(required=True)
+    metadata = fields.Raw(required=True)
 
     @post_load
     def make_project(self, data, **kwargs):
@@ -153,6 +165,7 @@ class ParameterSetSchema(Schema):
     parameter_set_id = fields.Integer()
     training_parameters = fields.Raw(required=True)
     is_active = fields.Boolean(required=True)
+    metadata = fields.Raw(required=True)
 
     @post_load
     def make_parameter_set(self, data, **kwargs):
@@ -196,6 +209,7 @@ class TrainedModelSchema(Schema):
     backtest_timestamp = fields.DateTime(required=True)
     backtest_metrics = fields.Raw(required=True)
     passed_backtesting = fields.Boolean(required=True)
+    metadata = fields.Raw(required=True)
 
     @post_load
     def make_trained_model(self, data, **kwargs):
@@ -236,6 +250,7 @@ class ModelTestSchema(Schema):
     test_timestamp = fields.DateTime(required=True)
     test_metrics = fields.Raw(required=True)
     passed_testing = fields.Boolean(required=True)
+    metadata = fields.Raw(required=True)
 
     @post_load
     def make_test_results(self, data, **kwargs):
