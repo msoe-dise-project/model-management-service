@@ -88,4 +88,5 @@ class TestTrainedModels(unittest.TestCase):
         trained_model_id = session.create_trained_model(test_trained_model)
         returned_trained_model = session.get_trained_model(trained_model_id)
         self.assertEqual(test_trained_model.model_object, returned_trained_model.model_object)
-        self.assertEqual(test_trained_model.backtest_timestamp, returned_trained_model.backtest_timestamp)
+        self.assertEqual(test_trained_model.backtest_timestamp,
+                         returned_trained_model.backtest_timestamp)

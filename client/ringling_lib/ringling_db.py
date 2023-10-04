@@ -116,7 +116,7 @@ def obj_list(cur_url, obj_func):
     """
     object_json = perform_list(cur_url)
     object_list = [obj_func(obj, True) for obj in object_json]
-    return {id: obj for id, obj in object_list}
+    return dict(object_list)
 
 class RinglingDBSession:
     """
@@ -143,7 +143,7 @@ class RinglingDBSession:
             response = requests.get(self.url + "/healthcheck", timeout=0.5)
             response_json = response.json()
             return bool(response_json["database"]["connection"]["healthy"])
-        except requests.exceptions.ConnectTimeout as e:
+        except requests.exceptions.ConnectTimeout:
             return False
 
     def create_project(self, project):
@@ -158,9 +158,9 @@ class RinglingDBSession:
                                      json=obj, timeout=5)
             if handle_create(response):
                 return response.json()['project_id']
-            return None
         except RequestsConnectionError:
             connection_error()
+        return None
 
     def create_param_set(self, param_set):
         """
@@ -181,6 +181,7 @@ class RinglingDBSession:
             return None
         except RequestsConnectionError:
             connection_error()
+        return None
 
     def create_trained_model(self, trained_model):
         """
@@ -197,6 +198,7 @@ class RinglingDBSession:
                 return response.json()['model_id']
         except RequestsConnectionError:
             connection_error()
+        return None
 
     def create_model_test(self, model_test):
         """
@@ -212,58 +214,63 @@ class RinglingDBSession:
                 return response.json()['test_id']
         except RequestsConnectionError:
             connection_error()
+        return None
 
-    def get_project(self, id):
+    def get_project(self, cur_id):
         """
         Get a project from Ringling given an id
-        :param id: the id to retrieve
+        :param cur_id: the id to retrieve
         :return: The Project object
         """
-        url = self.project_url + "/" + str(id)
+        url = self.project_url + "/" + str(cur_id)
         try:
             response = requests.get(url, timeout=5)
-            return json_to_project(handle_get(response, "Project", id))
+            return json_to_project(handle_get(response, "Project", cur_id))
         except RequestsConnectionError:
             connection_error()
+        return None
 
-    def get_param_set(self, id):
+    def get_param_set(self, cur_id):
         """
         Get a parameter set from Ringling given an id
-        :param id: the id to retrieve
+        :param cur_id: the id to retrieve
         :return: the ParameterSet object
         """
-        url = self.param_url + "/" + str(id)
+        url = self.param_url + "/" + str(cur_id)
         try:
             response = requests.get(url, timeout=5)
-            return json_to_param_set(handle_get(response, "Parameter Set", id))
+            return json_to_param_set(handle_get(response, "Parameter Set", cur_id))
         except RequestsConnectionError:
             connection_error()
+        return None
 
-    def get_trained_model(self, id):
+    def get_trained_model(self, cur_id):
         """
         Get a trained model from Ringling given an id
-        :param id: the id to retrieve
+        :param cur_id: the id to retrieve
         :return: TrainedModel object
         """
-        url = self.trained_model_url + "/" + str(id)
+        url = self.trained_model_url + "/" + str(cur_id)
         try:
             response = requests.get(url, timeout=5)
-            return json_to_trained_model(handle_get(response, "Trained Model", id))
+            return json_to_trained_model(handle_get(response, "Trained Model", cur_id))
         except RequestsConnectionError:
             connection_error()
+        return None
 
-    def get_model_test(self, id):
+    def get_model_test(self, cur_id):
         """
         Get a model test from Ringling given an ID
-        :param id: the id to retrieve
+        :param cur_id: the id to retrieve
         :return: ModelTest object
         """
-        url = self.model_test_url + "/" + str(id)
+        url = self.model_test_url + "/" + str(cur_id)
         try:
             response = requests.get(url, timeout=5)
-            return json_to_model_test(handle_get(response, "Model Test", id))
+            return json_to_model_test(handle_get(response, "Model Test", cur_id))
         except RequestsConnectionError:
             connection_error()
+        return None
 
     def list_projects(self):
         """

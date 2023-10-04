@@ -1,3 +1,6 @@
+"""
+Module for Trained Model objects
+"""
 class TrainedModel:
     """
     Object for trained models fields

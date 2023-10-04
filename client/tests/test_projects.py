@@ -68,4 +68,3 @@ class TestProjects(unittest.TestCase):
         project_id = session.create_project(test_project)
         returned_project = session.get_project(project_id)
         self.assertEqual(test_project.project_name, returned_project.project_name)
-

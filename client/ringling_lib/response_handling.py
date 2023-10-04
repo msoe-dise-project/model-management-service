@@ -54,6 +54,7 @@ def handle_get(response, object_type, cur_id):
         print("Connection forbidden. "
               "Is there another service such as a Jupyter Notebook running on this port?")
         sys.exit(1)
+    return None
 
 
 def perform_list(rest_url):
@@ -69,9 +70,10 @@ def perform_list(rest_url):
                   "Is there another service such as a Jupyter Notebook running on this port?")
             sys.exit(1)
         response_json = response.json()
-        pprint.pprint(response_json)
+        return response_json
     except RequestsConnectionError:
         connection_error()
+    return None
 
 
 def connection_error():

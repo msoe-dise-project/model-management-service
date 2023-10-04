@@ -1,3 +1,6 @@
+"""
+Module for model test objects
+"""
 class ModelTest:
     """
     Object for model test fields

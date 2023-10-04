@@ -1,3 +1,6 @@
+"""
+Module for project objects
+"""
 class Project:
     """
     Object for the project class
