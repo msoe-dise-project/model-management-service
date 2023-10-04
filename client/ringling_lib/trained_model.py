@@ -1,6 +1,7 @@
 """
 Module for Trained Model objects
 """
+# pylint: disable=W0611
 class TrainedModel:
     """
     Object for trained models fields
