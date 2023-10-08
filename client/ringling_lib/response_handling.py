@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
-# pylint: disable=R0801
+
 import sys
 import pprint
 import requests
@@ -29,37 +29,12 @@ def handle_create(response):
     if 200 <= response.status_code < 300:
         return True
     if response.status_code == 400:
-        print(response.json()['error'], file=sys.stderr)
-        sys.exit(1)
+        return False
     if response.status_code == 403:
         print("Connection forbidden. "
               "Is there another service such as a Jupyter Notebook running on this port?")
         sys.exit(1)
     return False
-
-
-def handle_modify(response, object_type, cur_id):
-    """
-    Handle the response from modify commands
-    :param response: the response object
-    :param object_type: the object type (for displaying errors)
-    :param cur_id: the id of the object
-    :return: if the response was a success
-    """
-    if 200 <= response.status_code < 300:
-        return True
-    if response.status_code == 404:
-        print(f"Invalid {object_type} ID {cur_id}", file=sys.stderr)
-        sys.exit(1)
-    if response.status_code == 400:
-        print(response.json()['error'], file=sys.stderr)
-        sys.exit(1)
-    if response.status_code == 403:
-        print("Connection forbidden. "
-              "Is there another service such as a Jupyter Notebook running on this port?")
-        sys.exit(1)
-    return False
-
 
 def handle_get(response, object_type, cur_id):
     """
@@ -71,7 +46,7 @@ def handle_get(response, object_type, cur_id):
     """
     if 200 <= response.status_code < 300:
         response_json = response.json()
-        pprint.pprint(response_json)
+        return response_json
     if response.status_code == 404:
         print(f"Invalid {object_type} ID {cur_id}", file=sys.stderr)
         sys.exit(1)
@@ -79,6 +54,7 @@ def handle_get(response, object_type, cur_id):
         print("Connection forbidden. "
               "Is there another service such as a Jupyter Notebook running on this port?")
         sys.exit(1)
+    return None
 
 
 def perform_list(rest_url):
@@ -94,9 +70,10 @@ def perform_list(rest_url):
                   "Is there another service such as a Jupyter Notebook running on this port?")
             sys.exit(1)
         response_json = response.json()
-        pprint.pprint(response_json)
+        return response_json
     except RequestsConnectionError:
         connection_error()
+    return None
 
 
 def connection_error():
