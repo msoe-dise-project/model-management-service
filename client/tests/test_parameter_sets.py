@@ -12,6 +12,7 @@ limitations under the License.
 """
 
 import os
+import pickle
 import unittest
 
 from ringling_lib.param_set import ParameterSet
@@ -37,7 +38,7 @@ class TestParameterSets(unittest.TestCase):
         }
         test_param_set = ParameterSet(
             obj['project_id'],
-            obj['training_parameters'],
+            pickle.dumps(obj['training_parameters']).hex(),
             obj['is_active'],
             obj['metadata']
         )
@@ -51,7 +52,7 @@ class TestParameterSets(unittest.TestCase):
         """
         session = RinglingDBSession(base_url)
         test_param_set = ParameterSet(
-            3, { "param1" : 1, "param2" : "2" },
+            3, pickle.dumps({"param1" : 1, "param2" : "2"}).hex(),
             False, {"meta1": 1, "meta2": 2}
         )
         param_set_id = session.create_param_set(test_param_set)
@@ -64,9 +65,37 @@ class TestParameterSets(unittest.TestCase):
         """
         session = RinglingDBSession(base_url)
         test_param_set = ParameterSet(
-            4, { "param1" : 5, "param2" : "6" },
+            4, pickle.dumps({"param1" : 5, "param2" : "6"}).hex(),
             False, {"meta4": 1, "meta5": 90}
         )
         param_set_id = session.create_param_set(test_param_set)
         returned_param_set = session.get_param_set(param_set_id)
         self.assertEqual(test_param_set.training_parameters, returned_param_set.training_parameters)
+
+    def test_param_list(self):
+        """
+        Test listing parameter sets
+        :return: If the returned parameter sets contain the newly created ones
+        """
+        session = RinglingDBSession(base_url)
+        test_param_set = ParameterSet(
+            4, pickle.dumps({"param1": 5, "param2": "6"}).hex(),
+            False, {"meta4": 1, "meta5": 90}
+        )
+        test_param_set_2 = ParameterSet(
+            4, {"param1": 6, "param2": "7"},
+            False, {"meta6": 1, "meta7": 92}
+        )
+        test_param_set_3 = ParameterSet(
+            4, pickle.dumps({"param1": 8, "param2": "9", "param3": 10}).hex(),
+            False, {"meta8": 1, "meta9": 94}
+        )
+        param_set_id = session.create_param_set(test_param_set)
+        param_set_id_2 = session.create_param_set(test_param_set_2)
+        param_set_id_3 = session.create_param_set(test_param_set_3)
+
+        param_sets = session.list_param_sets()
+
+        self.assertTrue(param_set_id in param_sets)
+        self.assertTrue(param_set_id_2 in param_sets)
+        self.assertTrue(param_set_id_3 in param_sets)

@@ -13,6 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
+import pprint
 
 import requests
 from requests.exceptions import ConnectionError as RequestsConnectionError
@@ -20,6 +21,8 @@ from .response_handling import handle_create
 from .response_handling import handle_get
 from .response_handling import perform_list
 from .response_handling import connection_error
+from ringling_lib.project import Project
+from ringling_lib.ringling_db import RinglingDBSession
 
 
 def get_url(base_url):
@@ -30,43 +33,31 @@ def get_url(base_url):
     return base_url + "/v1/projects"
 
 
-def create_project(base_url, project_name):
+def create_project(session, project_name, metadata):
     """
     Create a project on the Ringling service
-    :param base_url: The URL of the Ringling Service
+    :param session: An instance of Ringling DB session
     :param project_name: The name of the project to create
     :return: The response from the service
     """
-    obj = {"project_name": project_name}
-    try:
-        response = requests.post(get_url(base_url),
-                                 json=obj, timeout=5)
-        if handle_create(response):
-            print(f"Project {project_name} created successfully")
-            print("Project ID:", response.json()['project_id'])
-    except RequestsConnectionError:
-        connection_error()
+    proj = Project(project_name, metadata)
+    proj_id = session.create_project(proj)
 
 
-def list_projects(base_url):
+def list_projects(session):
     """
     List all the projects in the Ringling Service
-    :param base_url: The URL of the Ringling Service
+    :param session: An instance of Ringling DB session
     :return: None
     """
-    perform_list(get_url(base_url))
+    pprint.pprint(session.list_projects_json())
 
 
-def get_project(base_url, project_id):
+def get_project(session, project_id):
     """
     Return information about a specific project in the Ringling Service by ID
-    :param base_url: The URL of the Ringling Service
+    :param session: An instance of Ringling DB session
     :param project_id:
     :return: None
     """
-    url = get_url(base_url) + "/" + str(project_id)
-    try:
-        response = requests.get(url, timeout=5)
-        handle_get(response, "Project", project_id)
-    except RequestsConnectionError:
-        connection_error()
+    pprint.pprint(session.get_project_json(project_id))

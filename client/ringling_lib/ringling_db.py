@@ -33,7 +33,6 @@ def json_to_project(project_json, id_tuple=False):
     :param id_tuple: Whether to include the id
     :return: a Project object
     """
-
     project_obj = Project(
         project_json['project_name'],
         project_json['metadata']
@@ -114,7 +113,7 @@ def obj_list(cur_url, obj_func):
     :param obj_func: The conversion function
     :return: A dictionary of type id:object
     """
-    object_json = perform_list(cur_url)
+    object_json = next(iter(perform_list(cur_url).values()))
     object_list = [obj_func(obj, True) for obj in object_json]
     return dict(object_list)
 
@@ -216,19 +215,35 @@ class RinglingDBSession:
             connection_error()
         return None
 
+    def _get_project(self, cur_id):
+        """
+        Get a project from Ringling given an id
+        :param cur_id: the id to retrieve
+        :return: The string with json Project information
+        """
+        url = self.project_url + "/" + str(cur_id)
+        try:
+            response = requests.get(url, timeout=5)
+            return handle_get(response, "Project", cur_id)
+        except RequestsConnectionError:
+            connection_error()
+        return None
+
     def get_project(self, cur_id):
         """
         Get a project from Ringling given an id
         :param cur_id: the id to retrieve
         :return: The Project object
         """
-        url = self.project_url + "/" + str(cur_id)
-        try:
-            response = requests.get(url, timeout=5)
-            return json_to_project(handle_get(response, "Project", cur_id))
-        except RequestsConnectionError:
-            connection_error()
-        return None
+        return json_to_project(self._get_project(cur_id))
+
+    def get_project_json(self, cur_id):
+        """
+        Get a project's json from Ringling given an id
+        :param cur_id: the id to retrieve
+        :return: The string with json Project information
+        """
+        return self._get_project(cur_id)
 
     def get_param_set(self, cur_id):
         """
@@ -279,12 +294,26 @@ class RinglingDBSession:
         """
         return obj_list(self.project_url, json_to_project)
 
+    def list_projects_json(self):
+        """
+        List all the projects in Ringling
+        :return: A string with the exact contents of the list command
+        """
+        return perform_list(self.project_url)
+
     def list_param_sets(self):
         """
         List all the parameter sets in Ringling
         :return: A dictionary of id:ParameterSet for all parameter sets
         """
         return obj_list(self.param_url, json_to_param_set)
+
+    def list_param_sets_json(self):
+        """
+        List all the projects in Ringling
+        :return: A string with the exact contents of the list parameter sets command
+        """
+        return perform_list(self.param_url)
 
     def list_trained_models(self):
         """
@@ -293,9 +322,23 @@ class RinglingDBSession:
         """
         return obj_list(self.trained_model_url, json_to_trained_model)
 
+    def list_trained_models_json(self):
+        """
+        List all the trained models in Ringling
+        :return: A string with the exact contents of the list trained models command
+        """
+        return perform_list(self.trained_model_url)
+
     def list_model_tests(self):
         """
         List all the model tests in Ringling
         :return: A dictionary of id:ModelTest for all model tests
         """
         return obj_list(self.model_test_url, json_to_model_test)
+
+    def list_model_tests_json(self):
+        """
+        List all the model tests in Ringling
+        :return: A string with the exact contents of the list model tests command
+        """
+        return perform_list(self.model_test_url)

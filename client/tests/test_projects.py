@@ -60,7 +60,7 @@ class TestProjects(unittest.TestCase):
 
     def test_project_get(self):
         """
-        Get a project given an ID
+        Test getting a project given an ID
         :return: If the retrieved project name matches the one sent
         """
         session = RinglingDBSession(base_url)
@@ -68,3 +68,21 @@ class TestProjects(unittest.TestCase):
         project_id = session.create_project(test_project)
         returned_project = session.get_project(project_id)
         self.assertEqual(test_project.project_name, returned_project.project_name)
+
+    def test_project_list(self):
+        """
+        Test listing projects
+        :return: If the returned projects contain the newly created ones
+        """
+        session = RinglingDBSession(base_url)
+        test_project = Project("test_list1", {"val2": 2, "val3": "3"})
+        test_project_2 = Project("test_list2", {"val2": 2, "val3": "3"})
+        test_project_3 = Project("test_list3", {"val2": 2, "val3": "3"})
+        project_id = session.create_project(test_project)
+        project_id_2 = session.create_project(test_project_2)
+        project_id_3 = session.create_project(test_project_3)
+        projects = session.list_projects()
+
+        self.assertTrue(project_id in projects)
+        self.assertTrue(project_id_2 in projects)
+        self.assertTrue(project_id_3 in projects)

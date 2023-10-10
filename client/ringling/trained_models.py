@@ -21,6 +21,8 @@ from .response_handling import handle_get
 from .response_handling import handle_modify
 from .response_handling import perform_list
 from .response_handling import connection_error
+from ringling_lib.trained_model import TrainedModel
+from ringling_lib.ringling_db import RinglingDBSession
 
 
 def get_url(base_url):

@@ -77,3 +77,31 @@ class TestModelTests(unittest.TestCase):
         returned_model_test = session.get_model_test(model_test_id)
         self.assertEqual(test_model_test.test_timestamp, returned_model_test.test_timestamp)
         self.assertEqual(test_model_test.metadata, returned_model_test.metadata)
+
+    def test_model_test_list(self):
+        """
+        Test listing trained models sets
+        :return: If the returned trained models contain the newly created ones
+        """
+        session = RinglingDBSession(base_url)
+        test_model_test = ModelTest(
+        5, 5, 7, datetime.now().isoformat(),
+        {"AUROC": 0.95}, False, {"test data": "important test data"}
+        )
+        test_model_test_2 = ModelTest(
+        5, 6, 8, datetime.now().isoformat(),
+        {"AUROC": 0.97}, True, {"test data": "data 2"}
+        )
+        test_model_test_3 = ModelTest(
+        5, 7, 9, datetime.now().isoformat(),
+        {"AUROC": 0.98}, True, {"test data": "data 3"}
+        )
+        model_test_id = session.create_model_test(test_model_test)
+        model_test_id_2 = session.create_model_test(test_model_test_2)
+        model_test_id_3 = session.create_model_test(test_model_test_3)
+
+        model_tests = session.list_model_tests()
+
+        self.assertTrue(model_test_id in model_tests)
+        self.assertTrue(model_test_id_2 in model_tests)
+        self.assertTrue(model_test_id_3 in model_tests)

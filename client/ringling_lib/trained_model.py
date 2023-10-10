@@ -2,6 +2,9 @@
 Module for Trained Model objects
 """
 # pylint: disable=R0801
+
+from .utils import validate_types
+from .utils import validate_iso
 class TrainedModel:
     """
     Object for trained models fields
@@ -26,6 +29,35 @@ class TrainedModel:
         """
         if metadata is None:
             metadata = {}
+
+        params = [(project_id, int),
+                  (parameter_set_id, int),
+                  (training_data_from, str),
+                  (training_data_until, str),
+                  (model_object, str),
+                  (train_timestamp, str),
+                  (deployment_stage, str),
+                  (backtest_timestamp, str),
+                  (backtest_metrics, dict),
+                  (passed_backtesting, bool),
+                  (metadata, dict)]
+
+        validate_types(params)
+
+        timestamps = {
+            'training_data_from': training_data_from,
+            'training_data_until': training_data_until,
+            'train_timestamp': train_timestamp,
+            'backtest_timestamp': backtest_timestamp,
+        }
+
+        for key, value in timestamps.items():
+            if not validate_iso(value):
+                raise ValueError(f'{key} with value of {value} is not in ISO-8601 format')
+
+        if deployment_stage not in ["testing", "production", "retired"]:
+            raise ValueError(f'deployment_stage with value \"{deployment_stage}\" must be one of: '
+                             f'["testing", "production", "retired"]')
         self.project_id = project_id
         self.parameter_set_id = parameter_set_id
         self.training_data_from = training_data_from

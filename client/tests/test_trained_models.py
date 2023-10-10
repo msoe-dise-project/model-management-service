@@ -33,8 +33,8 @@ class TestTrainedModels(unittest.TestCase):
         session = RinglingDBSession(base_url)
         obj = {"project_id": 3,
                  "parameter_set_id": 2,
-                 "training_data_from": "1995-01-01T00:00:00.000000",
-                 "training_data_until": "2000-12-31T23:59:59.999999",
+                 "training_data_from": "1995-01-01T01:00:00.0000",
+                 "training_data_until": "2000-12-31T17:59:59.9999",
                  "model_object": "0x00a5234f6123371",
                  "train_timestamp": datetime.now().isoformat(),
                  "deployment_stage": "testing",
@@ -42,6 +42,7 @@ class TestTrainedModels(unittest.TestCase):
                  "backtest_metrics": {"precision": 0.85, "recall": 0.75},
                  "passed_backtesting": True,
                  "metadata": {"Additional data":"More data"}}
+
         test_trained_model = TrainedModel(
                 obj['project_id'],
                 obj['parameter_set_id'],
@@ -90,3 +91,37 @@ class TestTrainedModels(unittest.TestCase):
         self.assertEqual(test_trained_model.model_object, returned_trained_model.model_object)
         self.assertEqual(test_trained_model.backtest_timestamp,
                          returned_trained_model.backtest_timestamp)
+
+    def test_trained_model_list(self):
+        """
+        Test listing trained models sets
+        :return: If the returned trained models contain the newly created ones
+        """
+        session = RinglingDBSession(base_url)
+        test_trained_model = TrainedModel(
+            1,5, "2010-01-01T00:00:00.000000", "2015-12-31T23:59:59.999999",
+            "0x00a5234f6733135", datetime.now().isoformat(), "production",
+            datetime.now().isoformat(), {"precision": 0.95, "recall": 0.75},
+            True, {"data":"data2"}
+        )
+        test_trained_model_2 = TrainedModel(
+            1,6, "2012-01-01T00:00:00.000000", "2017-12-31T23:59:59.999999",
+            "0x00a5234f6733135", datetime.now().isoformat(), "production",
+            datetime.now().isoformat(), {"precision": 0.9, "recall": 0.7},
+            True, {"data":"data3"}
+        )
+        test_trained_model_3 = TrainedModel(
+            1,7, "2015-01-01T00:00:00.000000", "2020-12-31T23:59:59.999999",
+            "0x00a5234f6733135", datetime.now().isoformat(), "production",
+            datetime.now().isoformat(), {"precision": 0.98, "recall": 0.87},
+            True, {"data":"data4"}
+        )
+        trained_model_id = session.create_trained_model(test_trained_model)
+        trained_model_id_2 = session.create_trained_model(test_trained_model_2)
+        trained_model_id_3 = session.create_trained_model(test_trained_model_3)
+
+        trained_models = session.list_trained_models()
+
+        self.assertTrue(trained_model_id in trained_models)
+        self.assertTrue(trained_model_id_2 in trained_models)
+        self.assertTrue(trained_model_id_3 in trained_models)
