@@ -15,6 +15,9 @@ def validate_types(params):
 
 
 def validate_iso(test_string):
+    """
+    Validate if a string is valid iso format
+    """
     try:
         datetime.fromisoformat(test_string)
     except ValueError:

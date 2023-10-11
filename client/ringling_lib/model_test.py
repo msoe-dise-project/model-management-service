@@ -35,7 +35,8 @@ class ModelTest:
         validate_types(params)
 
         if not validate_iso(test_timestamp):
-            raise ValueError(f'test_timestamp with value of {test_timestamp} is not in ISO-8601 format')
+            raise ValueError(f'test_timestamp with value of '
+                             f'{test_timestamp} is not in ISO-8601 format')
 
         self.project_id = project_id
         self.parameter_set_id = parameter_set_id

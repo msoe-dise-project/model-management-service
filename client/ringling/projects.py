@@ -17,12 +17,13 @@ import pprint
 
 import requests
 from requests.exceptions import ConnectionError as RequestsConnectionError
+from ringling_lib.project import Project
+from ringling_lib.ringling_db import RinglingDBSession
 from .response_handling import handle_create
 from .response_handling import handle_get
 from .response_handling import perform_list
 from .response_handling import connection_error
-from ringling_lib.project import Project
-from ringling_lib.ringling_db import RinglingDBSession
+
 
 
 def get_url(base_url):
@@ -41,7 +42,7 @@ def create_project(session, project_name, metadata):
     :return: The response from the service
     """
     proj = Project(project_name, metadata)
-    proj_id = session.create_project(proj)
+    return session.create_project(proj)
 
 
 def list_projects(session):
