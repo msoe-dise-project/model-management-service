@@ -20,7 +20,6 @@ import pickle
 import sys
 import os
 from datetime import datetime
-from ringling.test_script import print_test
 from ringling.projects import create_project
 from ringling.projects import list_projects
 from ringling.projects import get_project
@@ -35,6 +34,11 @@ from ringling.trained_models import modify_trained_model
 from ringling.model_tests import create_model_test
 from ringling.model_tests import list_model_tests
 from ringling.model_tests import get_model_test
+from ringling_lib.ringling_db import RinglingDBSession
+from ringling_lib.project import Project
+from ringling_lib.param_set import ParameterSet
+from ringling_lib.trained_model import TrainedModel
+from ringling_lib.model_test import ModelTest
 
 
 def parse_boolean(arg):
@@ -68,6 +72,12 @@ def parseargs():
                                        type=str,
                                        required=True,
                                        help="The name for the newly created project")
+
+    project_create_parser.add_argument("-MD", "--metadata",
+                                     type=str,
+                                     required=False,
+                                     dest="metadata",
+                                     help="A path to a json formatted file with the metadata for the project")
 
     project_parsers.add_parser("list", help="List projects")
 
@@ -250,11 +260,16 @@ if __name__ == "__main__":
     if base_url == "localhost":
         base_url = "http://localhost:8888"
 
+    session = RinglingDBSession(base_url)
+
+    if not session.perform_connect_check():
+        print("Connection not established. Check the URL and make sure Ringling is running.")
+
     if args.object == "project":
         if args.action == "get":
             get_project(base_url, args.id)
         elif args.action == "create":
-            create_project(base_url, args.name)
+            create_project(base_url, args.name, args.metadata)
         elif args.action == "list":
             list_projects(base_url)
 

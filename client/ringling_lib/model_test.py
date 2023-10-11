@@ -1,6 +1,10 @@
 """
 Module for model test objects
 """
+
+from .utils import validate_types
+from .utils import validate_iso
+
 class ModelTest:
     """
     Object for model test fields
@@ -19,6 +23,21 @@ class ModelTest:
         """
         if metadata is None:
             metadata = {}
+
+        params = [(project_id, int),
+                  (parameter_set_id, int),
+                  (model_id, int),
+                  (test_timestamp, str),
+                  (test_metrics, dict),
+                  (passed_testing, bool),
+                  (metadata, dict)]
+
+        validate_types(params)
+
+        if not validate_iso(test_timestamp):
+            raise ValueError(f'test_timestamp with value of '
+                             f'{test_timestamp} is not in ISO-8601 format')
+
         self.project_id = project_id
         self.parameter_set_id = parameter_set_id
         self.model_id = model_id

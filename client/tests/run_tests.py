@@ -11,11 +11,11 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 import unittest
-from .test_connection import TestConnection
-from .test_projects import TestProjects
-from .test_parameter_sets import TestParameterSets
-from .test_trained_models import TestTrainedModels
-from .test_model_tests import TestModelTests
+from tests.test_connection import TestConnection
+from tests.test_projects import TestProjects
+from tests.test_parameter_sets import TestParameterSets
+from tests.test_trained_models import TestTrainedModels
+from tests.test_model_tests import TestModelTests
 
 test_suite = unittest.TestSuite()
 
