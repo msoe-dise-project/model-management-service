@@ -45,7 +45,8 @@ def create_project(session, project_name, metadata):
     proj = Project(project_name, metadata)
     cur_id = session.create_project(proj)
     if cur_id is None:
-        print(f"Project not created. Project \"{project_name}\" likely already exists.", file=sys.stderr)
+        print(f"Project not created. Project \"{project_name}\" "
+              f"likely already exists.", file=sys.stderr)
         sys.exit(1)
     else:
         print(f"Project created with ID {cur_id}")
