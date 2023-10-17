@@ -13,6 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
+import pprint
 
 import requests
 from requests.exceptions import ConnectionError as RequestsConnectionError
@@ -34,35 +35,24 @@ def get_url(base_url):
     return base_url + "/v1/trained_models"
 
 
-def create_trained_model(base_url, obj):
+def create_trained_model(session, obj):
     """
     Create a trained model on the Ringling service
     :param base_url: The URL of the Ringling Service
-    :param obj: The model object payload
+    :param obj: The model object
     :return: None
     """
-    try:
-        response = requests.post(get_url(base_url),
-                                 json=obj, timeout=5)
-        if handle_create(response):
-            print(f"Trained model created with ID {response.json()['model_id']}")
-    except RequestsConnectionError:
-        connection_error()
+    cur_id = session.create_trained_model(obj)
+    print(f"Trained Model created with ID {cur_id}")
 
-
-def get_trained_model(base_url, trained_model_id):
+def get_trained_model(session, trained_model_id):
     """
     Get a trained model given an ID
     :param base_url: The URL of the Ringling Service
     :param trained_model_id: The ID of the trained model
     :return: None
     """
-    url = get_url(base_url) + "/" + str(trained_model_id)
-    try:
-        response = requests.get(url, timeout=5)
-        handle_get(response, "Trained Model", trained_model_id)
-    except RequestsConnectionError:
-        connection_error()
+    pprint.pprint(session.get_trained_model_json(trained_model_id))
 
 
 def modify_trained_model(base_url, model_id, status):
@@ -83,10 +73,10 @@ def modify_trained_model(base_url, model_id, status):
         connection_error()
 
 
-def list_trained_models(base_url):
+def list_trained_models(session):
     """
     List all the trained models in the Ringling Service
     :param base_url: The URL of the Ringling Service
     :return: None
     """
-    perform_list(get_url(base_url))
+    pprint.pprint(session.list_trained_models_json())

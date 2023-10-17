@@ -13,6 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
+# pylint: disable=R0904
 
 import requests
 from requests.exceptions import ConnectionError as RequestsConnectionError
@@ -245,7 +246,7 @@ class RinglingDBSession:
         """
         return self._get_project(cur_id)
 
-    def get_param_set(self, cur_id):
+    def _get_param_set(self, cur_id):
         """
         Get a parameter set from Ringling given an id
         :param cur_id: the id to retrieve
@@ -254,7 +255,37 @@ class RinglingDBSession:
         url = self.param_url + "/" + str(cur_id)
         try:
             response = requests.get(url, timeout=5)
-            return json_to_param_set(handle_get(response, "Parameter Set", cur_id))
+            return handle_get(response, "Parameter Set", cur_id)
+        except RequestsConnectionError:
+            connection_error()
+        return None
+
+    def get_param_set(self, cur_id):
+        """
+        Get a parameter set from Ringling given an id
+        :param cur_id: the id to retrieve
+        :return: the ParameterSet object
+        """
+        return json_to_param_set(self._get_param_set(cur_id))
+
+    def get_param_set_json(self, cur_id):
+        """
+        Get a parameter set from Ringling given an id
+        :param cur_id: the id to retrieve
+        :return: the ParameterSet object
+        """
+        return self._get_param_set(cur_id)
+
+    def _get_trained_model(self, cur_id):
+        """
+        Get a trained model from Ringling given an id
+        :param cur_id: the id to retrieve
+        :return: TrainedModel object
+        """
+        url = self.trained_model_url + "/" + str(cur_id)
+        try:
+            response = requests.get(url, timeout=5)
+            return handle_get(response, "Trained Model", cur_id)
         except RequestsConnectionError:
             connection_error()
         return None
@@ -265,10 +296,27 @@ class RinglingDBSession:
         :param cur_id: the id to retrieve
         :return: TrainedModel object
         """
-        url = self.trained_model_url + "/" + str(cur_id)
+        return json_to_trained_model(self._get_trained_model(cur_id))
+
+    def get_trained_model_json(self, cur_id):
+        """
+        Get a trained model from Ringling given an id
+        :param cur_id: the id to retrieve
+        :return: TrainedModel object
+        """
+        return self._get_trained_model(cur_id)
+
+
+    def _get_model_test(self, cur_id):
+        """
+        Get a model test from Ringling given an ID
+        :param cur_id: the id to retrieve
+        :return: ModelTest object
+        """
+        url = self.model_test_url + "/" + str(cur_id)
         try:
             response = requests.get(url, timeout=5)
-            return json_to_trained_model(handle_get(response, "Trained Model", cur_id))
+            return handle_get(response, "Model Test", cur_id)
         except RequestsConnectionError:
             connection_error()
         return None
@@ -279,13 +327,15 @@ class RinglingDBSession:
         :param cur_id: the id to retrieve
         :return: ModelTest object
         """
-        url = self.model_test_url + "/" + str(cur_id)
-        try:
-            response = requests.get(url, timeout=5)
-            return json_to_model_test(handle_get(response, "Model Test", cur_id))
-        except RequestsConnectionError:
-            connection_error()
-        return None
+        return json_to_model_test(self._get_model_test(cur_id))
+
+    def get_model_test_json(self, cur_id):
+        """
+        Get a model test from Ringling given an ID
+        :param cur_id: the id to retrieve
+        :return: ModelTest object
+        """
+        return self._get_model_test(cur_id)
 
     def list_projects(self):
         """

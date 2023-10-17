@@ -13,6 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
+import pprint
 
 import requests
 from requests.exceptions import ConnectionError as RequestsConnectionError
@@ -34,7 +35,7 @@ def get_url(base_url):
     return base_url + "/v1/parameter_sets"
 
 
-def create_param_set(base_url, project_id, training_params, is_active):
+def create_param_set(session, project_id, training_params, is_active, metadata):
     """
     Create a parameter set on the Ringling service
     :param base_url: The URL of the Ringling Service
@@ -43,32 +44,19 @@ def create_param_set(base_url, project_id, training_params, is_active):
     :param is_active: If the parameter set is active or inactive
     :return: None
     """
-    obj = {"project_id": project_id,
-           "training_parameters": training_params,
-           "is_active": is_active}
-
-    try:
-        response = requests.post(get_url(base_url),
-                                 json=obj, timeout=5)
-        if handle_create(response):
-            print(f"Parameter Set created with ID {response.json()['parameter_set_id']}")
-    except RequestsConnectionError:
-        connection_error()
+    param = ParameterSet(project_id, training_params, is_active, metadata)
+    cur_id = session.create_param_set(param)
+    print(f"Parameter Set created with ID {cur_id}")
 
 
-def get_param_set(base_url, param_set_id):
+def get_param_set(session, param_set_id):
     """
     Get a parameter set given an ID
     :param base_url: The URL of the Ringling Service
     :param param_set_id: The ID of the parameter set
     :return: None
     """
-    url = get_url(base_url) + "/" + str(param_set_id)
-    try:
-        response = requests.get(url, timeout=5)
-        handle_get(response, "Parameter Set", param_set_id)
-    except RequestsConnectionError:
-        connection_error()
+    pprint.pprint(session.get_param_set_json(param_set_id))
 
 
 def modify_param_set(base_url, param_set_id, is_active):
@@ -89,10 +77,10 @@ def modify_param_set(base_url, param_set_id, is_active):
         connection_error()
 
 
-def list_param_sets(base_url):
+def list_param_sets(session):
     """
     List all the parameter sets in the Ringling Service
     :param base_url: The URL of the Ringling Service
     :return: None
     """
-    perform_list(get_url(base_url))
+    pprint.pprint(session.list_param_sets_json())

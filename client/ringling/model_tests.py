@@ -13,6 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
+import pprint
 
 import requests
 from requests.exceptions import ConnectionError as RequestsConnectionError
@@ -33,41 +34,31 @@ def get_url(base_url):
     return base_url + "/v1/model_tests"
 
 
-def create_model_test(base_url, obj):
+def create_model_test(session, obj):
     """
     Create a model test on the Ringling service
     :param base_url: The URL of the Ringling Service
     :param obj: The model object payload
     :return: None
     """
-    try:
-        response = requests.post(get_url(base_url),
-                                 json=obj, timeout=5)
-        if handle_create(response):
-            print(f"Model Test created with ID {response.json()['test_id']}")
-    except RequestsConnectionError:
-        connection_error()
+    cur_id = session.create_model_test(obj)
+    print(f"Model Test created with ID {cur_id}")
 
 
-def get_model_test(base_url, model_test_id):
+def get_model_test(session, model_test_id):
     """
     Get a model test given an ID
     :param base_url: The URL of the Ringling Service
     :param model_test_id: The ID of the model test
     :return: None
     """
-    url = get_url(base_url) + "/" + str(model_test_id)
-    try:
-        response = requests.get(url, timeout=5)
-        handle_get(response, "Model Test", model_test_id)
-    except RequestsConnectionError:
-        connection_error()
+    pprint.pprint(session.get_model_test_json(model_test_id))
 
 
-def list_model_tests(base_url):
+def list_model_tests(session):
     """
     List all the model tests in the Ringling Service
     :param base_url: The URL of the Ringling Service
     :return: None
     """
-    perform_list(get_url(base_url))
+    pprint.pprint(session.list_model_tests_json())
