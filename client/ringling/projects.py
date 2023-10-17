@@ -14,6 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 import pprint
+import sys
 
 import requests
 from requests.exceptions import ConnectionError as RequestsConnectionError
@@ -42,7 +43,12 @@ def create_project(session, project_name, metadata):
     :return: The response from the service
     """
     proj = Project(project_name, metadata)
-    return session.create_project(proj)
+    cur_id = session.create_project(proj)
+    if cur_id is None:
+        print(f"Project not created. Project \"{project_name}\" likely already exists.", file=sys.stderr)
+        sys.exit(1)
+    else:
+        print(f"Project created with ID {cur_id}")
 
 
 def list_projects(session):

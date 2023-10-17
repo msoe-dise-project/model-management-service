@@ -50,6 +50,23 @@ def parse_boolean(arg):
         raise argparse.ArgumentTypeError('Boolean value expected.')
 
 
+def check_json(cur_arg):
+    if cur_arg.endswith(".json"):
+        if not os.path.isfile(cur_arg):
+            print("Specified file does not exist", file=sys.stderr)
+            sys.exit(1)
+    else:
+        print("Specified file must be json", file=sys.stderr)
+        sys.exit(1)
+    return True
+
+
+def check_json_metadata(cur_arg):
+    if cur_arg is None:
+        return False
+    else:
+        return check_json(cur_arg)
+
 def parseargs():
     parser = argparse.ArgumentParser()
     parser.add_argument("base_url", type=str,)
@@ -111,6 +128,12 @@ def parseargs():
                                      dest="active",
                                      help="A boolean specifying if the set is active")
 
+    param_create_parser.add_argument("-MD", "--metadata",
+                                     type=str,
+                                     required=False,
+                                     dest="metadata",
+                                     help="A path to a json formatted file with the metadata for the parameter set")
+
     param_modify_parser = param_parsers.add_parser("modify", help="Modify the activity status of a parameter set")
 
     param_modify_parser.add_argument("--id",
@@ -123,6 +146,8 @@ def parseargs():
                                      required=True,
                                      dest="active",
                                      help="A boolean specifying if the set is active")
+
+
 
     param_parsers.add_parser("list", help="List parameter sets")
 
@@ -183,6 +208,33 @@ def parseargs():
                                      dest="deployment_stage",
                                      choices=['testing', 'production', 'retired'],
                                      help="The deployment stage of the model")
+
+    model_create_parser.add_argument("-BT", "--backtest-timestamp",
+                                     type=str,
+                                     required=True,
+                                     dest="backtest_timestamp",
+                                     help="An ISO-8601 formatted string describing the "
+                                          "datetime of the backtesting")
+
+    model_create_parser.add_argument("-BM", "--backtest-metrics",
+                                     type=str,
+                                     required=False,
+                                     dest="backtest_metrics",
+                                     help="A path to a json formatted file with the backtest"
+                                          " metrics for the trained model")
+
+    model_create_parser.add_argument("-PB", "--passed-backtesting",
+                                     type=parse_boolean,
+                                     required=True,
+                                     dest="passed_backtesting",
+                                     help="A boolean specifying if trained model "
+                                          "passed backtesting")
+
+    model_create_parser.add_argument("-MD", "--metadata",
+                                     type=str,
+                                     required=False,
+                                     dest="metadata",
+                                     help="A path to a json formatted file with the metadata for the trained model")
 
     model_modify_parser = model_parsers.add_parser("modify", help="Modify the activity status of a trained model")
 
@@ -248,6 +300,12 @@ def parseargs():
                                      dest="test_passed",
                                      help="A boolean specifying if the model test was passed")
 
+    test_create_parser.add_argument("-MD", "--metadata",
+                                     type=str,
+                                     required=False,
+                                     dest="metadata",
+                                     help="A path to a json formatted file with the metadata for the model test")
+
     test_parsers.add_parser("list", help="List model tests")
 
     return parser.parse_args()
@@ -267,73 +325,105 @@ if __name__ == "__main__":
 
     if args.object == "project":
         if args.action == "get":
-            get_project(base_url, args.id)
+            get_project(session, args.id)
         elif args.action == "create":
-            create_project(base_url, args.name, args.metadata)
+            try:
+                if check_json_metadata(args.metadata):
+                    with open(args.metadata, 'r', encoding='utf-8') as file:
+                        metadata = json.load(file)
+                        create_project(session, args.name, metadata)
+                else:
+                    create_project(session, args.name, args.metadata)
+            except json.decoder.JSONDecodeError:
+                print("Specified metadata must be a path to a valid JSON file", file=sys.stderr)
+                sys.exit(1)
         elif args.action == "list":
-            list_projects(base_url)
+            list_projects(session)
 
     elif args.object == "param-set":
         if args.action == "get":
-            get_param_set(base_url, args.id)
+            get_param_set(session, args.id)
         elif args.action == "create":
             try:
-                if args.params.endswith(".json"):
-                    if not os.path.isfile(args.params):
-                        print("Specified file does not exist", file=sys.stderr)
-                        sys.exit(1)
+                if check_json(args.params):
                     with open(args.params, 'r', encoding='utf-8') as file:
                         params = json.load(file)
-                        create_param_set(base_url, args.id, params, args.active)
+                if check_json_metadata(args.metadata):
+                    with open(args.metadata, 'r', encoding='utf-8') as meta_file:
+                        metadata = json.load(meta_file)
+                    create_param_set(session, args.id, params, args.active, metadata)
                 else:
-                    print("Specified file must be json", file=sys.stderr)
-                    sys.exit(1)
+                    create_param_set(session, args.id, params, args.active, args.metadata)
             except json.decoder.JSONDecodeError:
-                print("Specified params must be a path to a valid JSON file", file=sys.stderr)
+                print("Specified params and metadata (if used) "
+                      "must be a path to a valid JSON file", file=sys.stderr)
                 sys.exit(1)
         elif args.action == "modify":
             modify_param_set(base_url, args.id, args.active)
         elif args.action == "list":
-            list_param_sets(base_url)
+            list_param_sets(session)
 
     elif args.object == "trained-model":
         if args.action == "get":
-            get_trained_model(base_url, args.id)
+            get_trained_model(session, args.id)
         elif args.action == "create":
             model_data = ""
             if not os.path.isfile(args.model):
                 print("Specified file does not exist", file=sys.stderr)
                 sys.exit(1)
             else:
-                with open(args.model, 'rb') as file:
-                    if args.model.endswith(".pickle") or args.model.endswith(".p"):
-                        model_data = pickle.dumps(pickle.load(file)).hex()
-                    else:
-                        model_data = pickle.dumps(file.read()).hex()
                 try:
-                    datetime.fromisoformat(args.train_data_start)
-                    datetime.fromisoformat(args.train_data_end)
-                    datetime.fromisoformat(args.timestamp)
-                except ValueError:
-                    print("Datetimes for training data start, training data end, and timestamp "
-                          "must be in ISO-8601 format", file=sys.stderr)
+                    with open(args.model, 'rb') as file:
+                        if args.model.endswith(".pickle") or args.model.endswith(".p"):
+                            model_data = pickle.dumps(pickle.load(file)).hex()
+                        else:
+                            model_data = pickle.dumps(file.read()).hex()
+                    try:
+                        datetime.fromisoformat(args.train_data_start)
+                        datetime.fromisoformat(args.train_data_end)
+                        datetime.fromisoformat(args.timestamp)
+                        datetime.fromisoformat(args.backtest_timestamp)
+                    except ValueError:
+                        print("Datetimes for training data start, training data end, timestamp, "
+                              "and backtest_timestamp must be in ISO-8601 format", file=sys.stderr)
+                        sys.exit(1)
+
+                    metadata = None
+                    if check_json_metadata(args.metadata):
+                        with open(args.metadata, 'r', encoding='utf-8') as file:
+                            metadata = json.load(file)
+
+                    backtest_metrics = None
+                    if check_json(args.backtest_metrics):
+                        with open(args.backtest_metrics, 'r', encoding='utf-8') as file:
+                            backtest_metrics = json.load(file)
+
+                    trained_model = TrainedModel(args.project_id,
+                                                 args.param_set_id,
+                                                 args.train_data_start,
+                                                 args.train_data_end,
+                                                 model_data,
+                                                 args.timestamp,
+                                                 args.deployment_stage,
+                                                 args.backtest_timestamp,
+                                                 backtest_metrics,
+                                                 args.passed_backtesting,
+                                                 metadata)
+
+                    create_trained_model(session, trained_model)
+
+                except json.decoder.JSONDecodeError:
+                    print("Specified metrics and metadata (if used) "
+                          "must be a path to a valid JSON file", file=sys.stderr)
                     sys.exit(1)
-                model_payload = {"project_id": args.project_id,
-                                 "parameter_set_id": args.param_set_id,
-                                 "training_data_from": args.train_data_start,
-                                 "training_data_until": args.train_data_end,
-                                 "model_object": model_data,
-                                 "train_timestamp": args.timestamp,
-                                 "deployment_stage": args.deployment_stage}
-                create_trained_model(base_url, model_payload)
         elif args.action == "modify":
             modify_trained_model(base_url, args.id, args.deployment_stage)
         elif args.action == "list":
-            list_trained_models(base_url)
+            list_trained_models(session)
 
     elif args.object == "model-test":
         if args.action == "get":
-            get_model_test(base_url, args.id)
+            get_model_test(session, args.id)
         elif args.action == "create":
             try:
                 if args.metrics.endswith(".json"):
@@ -347,18 +437,28 @@ if __name__ == "__main__":
                         except ValueError:
                             print("Datetime for timestamp must be in ISO-8601 format", file=sys.stderr)
                             sys.exit(1)
-                        model_payload = {"project_id": args.project_id,
-                                         "parameter_set_id": args.param_set_id,
-                                         "model_id": args.model_id,
-                                         "test_timestamp": args.timestamp,
-                                         "test_metrics": metrics,
-                                         "passed_testing": args.test_passed}
-                        create_model_test(base_url, model_payload)
+
+                        metadata = None
+                        if check_json_metadata(args.metadata):
+                            with open(args.metadata, 'r', encoding='utf-8') as meta_file:
+                                metadata = json.load(meta_file)
+
+                        model_test = ModelTest(
+                            args.project_id,
+                            args.param_set_id,
+                            args.model_id,
+                            args.timestamp,
+                            metrics,
+                            args.test_passed,
+                            metadata
+                        )
+                        create_model_test(session, model_test)
                 else:
                     print("Specified file must be json", file=sys.stderr)
                     sys.exit(1)
             except json.decoder.JSONDecodeError:
-                print("Specified params must be a path to a valid JSON file", file=sys.stderr)
+                print("Specified metrics and metadata (if used) "
+                      "must be a path to a valid JSON file", file=sys.stderr)
                 sys.exit(1)
         elif args.action == "list":
-            list_model_tests(base_url)
+            list_model_tests(session)
