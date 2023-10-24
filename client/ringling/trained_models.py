@@ -38,7 +38,7 @@ def get_url(base_url):
 def create_trained_model(session, obj):
     """
     Create a trained model on the Ringling service
-    :param base_url: The URL of the Ringling Service
+    :param session: An instance of a Ringling DB session
     :param obj: The model object
     :return: None
     """
@@ -48,7 +48,7 @@ def create_trained_model(session, obj):
 def get_trained_model(session, trained_model_id):
     """
     Get a trained model given an ID
-    :param base_url: The URL of the Ringling Service
+    :param session: An instance of a Ringling DB session
     :param trained_model_id: The ID of the trained model
     :return: None
     """
@@ -58,7 +58,7 @@ def get_trained_model(session, trained_model_id):
 def modify_trained_model(base_url, model_id, status):
     """
     Modify the deployment status of a trained model
-    :param base_url: The URL of the Ringling Service
+    :param session: An instance of a Ringling DB session
     :param model_id: The ID of the trained model
     :param status: The current deployment status of the model
     :return: None
@@ -76,7 +76,7 @@ def modify_trained_model(base_url, model_id, status):
 def list_trained_models(session):
     """
     List all the trained models in the Ringling Service
-    :param base_url: The URL of the Ringling Service
+    :param session: An instance of a Ringling DB session
     :return: None
     """
     pprint.pprint(session.list_trained_models_json())

@@ -23,7 +23,7 @@ setup(name="ringling-cli",
       author_email="nowling@msoe.edu",
       license="Apache License, Version 2.0",
       zip_safe=False,
-      packages=["ringling"],
+      packages=["ringling", "ringling_lib"],
       python_requires=">=3.8",
       install_requires=["requests"],
       scripts=["bin/ringling-cli"])

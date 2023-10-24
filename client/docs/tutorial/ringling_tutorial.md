@@ -27,25 +27,32 @@ This can be done in two ways:
 Create a new project to import into ringling
 """
 import requests
+from ringling_lib.ringling_db import RinglingDBSession
+from ringling_lib.project import Project
 
 # Set the endpoint url for project creation
 BASE_URL = "http://localhost:8888"
-OBJECT_URL = "/v1/projects"
-REQUEST_URL = BASE_URL + OBJECT_URL
 
-name_payload = {"project_name": "Tutorial Project"}
+PROJECT_NAME = "Tutorial Project"
+metadata = {"info1": "This is the Tutorial Project"}
 
 # Create the project
-response = requests.post(REQUEST_URL,
-                         json=name_payload, timeout=5)
+project_payload = Project(PROJECT_NAME, metadata)
+
+# Create an instance of RinglingDB and send the project
+session = RinglingDBSession(BASE_URL)
+cur_id = session.create_project(project_payload)
 
 # Make sure it worked
-print(response.json())
+if cur_id is None:
+    print(f"Project with name {PROJECT_NAME} already exists")
+else:
+    print(f"New Project created with ID {cur_id}")
 ```
 
 If everything is successful, this should output:
 ```bash
-{'project_id': 3}
+New Project created with ID 3
 ```
 
 
@@ -55,13 +62,26 @@ Some of the steps in this tutorial can also be performed using [Ringling-cli](ht
 
 Input:
 ```bash
-ringling-cli localhost project create --name "tutorial"
+ringling-cli localhost project create --name "Tutorial"
 ```
 
 Output:
 ```
-Project tutorial created successfully
-Project ID: 5
+Project Tutorial created with ID 4
+```
+
+Now let's get the project that we initially created using the library.
+
+Input:
+```bash
+ringling-cli localhost project get --id 3
+```
+
+Output:
+```
+{'metadata': {'info1': 'This is the Tutorial Project'},
+ 'project_id': 3,
+ 'project_name': 'Tutorial Project'}
 ```
 
 
@@ -76,28 +96,23 @@ The following is the schema for Parameter Sets:
 | parameter_set_id (Primary Key) | Integer         |
 | training_parameters            | Hex Byte String |
 | is_active                      | Boolean         |
-Now that there is a project, an untrained model, or parameter set, should be created. For this example, we are using a Scikit-learn Pipeline that includes a standard scaler and logistic regression. 
+Now that there is a project, an untrained model, or parameter set, should be created. For this example, we are using a Scikit-Learn Pipeline that includes a standard scaler and logistic regression. 
 
 ```python
 """
-Create a parameter set as a serialized Scikit-learn pipeline and put it into ringling
+Create a parameter set as a serialized Scikit-learn pipeline and put it into Ringling
 """
 import pickle
 import requests
 from sklearn.linear_model import LogisticRegression
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
-
-import pickle
-import requests
-from sklearn.linear_model import LogisticRegression
-from sklearn.pipeline import Pipeline
-from sklearn.preprocessing import StandardScaler
+from ringling_lib.ringling_db import RinglingDBSession
+from ringling_lib.param_set import ParameterSet
 
 # Set the endpoint url for parameter set creation
 BASE_URL = "http://localhost:8888"
-OBJECT_URL = "/v1/parameter_sets"
-REQUEST_URL = BASE_URL + OBJECT_URL
+metadata = {"info2": "This is the Tutorial Parameter Set"}
 
 # Set this to the project ID of the project you created earlier
 PROJECT_ID = 3
@@ -111,21 +126,24 @@ pipeline = Pipeline([
 # Convert pipeline to a hexed pickle to store it as a string
 pickled_pipeline = pickle.dumps(pipeline).hex()
 
-param_payload = {"project_id": PROJECT_ID,
-                 "training_parameters": pickled_pipeline,
-                 "is_active": True}
+param_payload = ParameterSet(PROJECT_ID,
+                             pickled_pipeline,
+                             True,
+                             metadata)
 
-# Create the parameter set
-response = requests.post(REQUEST_URL, json=param_payload, timeout=5)
+# Create an instance of RinglingDB and create the parameter set
+session = RinglingDBSession(BASE_URL)
+cur_id = session.create_param_set(param_payload)
 
 # Make sure it worked
-print(response.json())
+print(f"New Parameter Set created with ID {cur_id}")
+
 
 ```
 
 This should output (but potentially with a different ID):
 ```bash
-{'parameter_set_id': 9}
+New Parameter Set created with ID 9
 ```
 
 Now that we have created a parameter set, let's use Ringling-cli to see its data.
@@ -138,9 +156,10 @@ ringling-cli localhost param-set get --id 9
 Output (training_parameters field shortened for clarity):
 ```bash
 {'is_active': True,
+ 'metadata': {'info2': 'This is the Tutorial Parameter Set'},
  'parameter_set_id': 9,
  'project_id': 3,
- 'training_parameters': '800495f6010000000000008c10736b6c6561726e2e706970656c6...'}
+ 'training_parameters': '800495f6010000000000008c10736b6c6561726e...'}
  ```
 
 ## Training and Backtesting a Model
@@ -172,14 +191,14 @@ import requests
 import pandas as pd
 from sklearn.metrics import accuracy_score, precision_score, recall_score, roc_auc_score
 from sklearn.model_selection import train_test_split
+from ringling_lib.ringling_db import RinglingDBSession
+from ringling_lib.param_set import ParameterSet
+from ringling_lib.trained_model import TrainedModel
 
 
 # Set the endpoint url for parameter set get, and trained model create
 BASE_URL = "http://localhost:8888"
-PARAM_URL = "/v1/parameter_sets"
-MODEL_URL = "/v1/trained_models"
-PARAM_REQUEST_URL = BASE_URL + PARAM_URL
-MODEL_REQUEST_URL = BASE_URL + MODEL_URL
+metadata = {"info3": "This is the Tutorial Trained Model"}
 
 # Set this to the ID of the project you created earlier
 PROJECT_ID = 3
@@ -187,10 +206,10 @@ PROJECT_ID = 3
 # Set this to the ID of the parameter set you created earlier
 PARAMETER_SET_ID = 9
 
-# Send the request, get the pickled parameter set
-request_url = PARAM_REQUEST_URL + "/" + str(PARAMETER_SET_ID)
-response = requests.get(request_url, timeout=5)
-pickled_pipeline = response.json()["training_parameters"]
+# Create an instance of RinglingDB and retrieve the parameter set
+session = RinglingDBSession(BASE_URL)
+param_set = session.get_param_set(PARAMETER_SET_ID)
+pickled_pipeline = param_set.training_parameters
 
 pipeline = pickle.loads(bytes.fromhex(pickled_pipeline))
 
@@ -271,21 +290,22 @@ pipeline.fit(X, y)
 pipeline_object = pickle.dumps(pipeline).hex()
 
 # Save the model to Ringling
-model_payload = {"project_id": PROJECT_ID,
-                 "parameter_set_id": PARAMETER_SET_ID,
-                 "training_data_from": "1988-01-01T00:00:00.000000",
-                 "training_data_until": "1988-12-31T23:59:59.999999",
-                 "model_object": pipeline_object,
-                 "train_timestamp": train_timestamp,
-                 "deployment_stage": "testing",
-                 "backtest_timestamp": test_timestamp,
-                 "backtest_metrics": test_metrics,
-                 "passed_backtesting": passed_testing}
+trained_model_payload = TrainedModel(PROJECT_ID,
+                                     PARAMETER_SET_ID,
+                                     "1988-01-01T00:00:00.000000",
+                                     "1988-12-31T23:59:59.999999",
+                                     pipeline_object,
+                                     train_timestamp,
+                                     "testing",
+                                     test_timestamp,
+                                     test_metrics,
+                                     passed_testing,
+                                     metadata)
 
-response = requests.post(MODEL_REQUEST_URL, json=model_payload, timeout=5)
+cur_id = session.create_trained_model(trained_model_payload)
 
 # Make sure it worked
-print(response.json())
+print(f"New Trained Model created with ID {cur_id}")
 ```
 
 This should output:
@@ -298,7 +318,7 @@ Recall: 0.88678
 Recall Standard Deviation: 0.01711
 AUROC: 0.85007
 AUROC Standard Deviation: 0.01981
-{'model_id': 8}
+New Trained Model created with ID 8
 ```
 
 Now, let's see the model object it created using Ringling-cli
@@ -316,16 +336,20 @@ Output (model_object field shortened for clarity):
                       'precision_std': 0.038996281267517356,
                       'recall': 0.8867752114448577,
                       'recall_std': 0.017109439332137488},
- 'backtest_timestamp': '2023-08-15T12:10:55.438305',
+ 'backtest_timestamp': '2023-10-24T14:39:41.966415',
  'deployment_stage': 'testing',
+ 'metadata': {'info3': 'This is the Tutorial Trained Model'},
  'model_id': 8,
- 'model_object': '80049576060000000000008c10...',
+ 'model_object': '80049576060000000000008c10736b6c6561726e...',
  'parameter_set_id': 9,
  'passed_backtesting': True,
  'project_id': 3,
- 'train_timestamp': '2023-08-15T12:10:55.384296',
+ 'train_timestamp': '2023-10-24T14:39:41.932877',
  'training_data_from': '1988-01-01T00:00:00',
  'training_data_until': '1988-12-31T23:59:59.999999'}
+
+Process finished with exit code 0
+
  ```
 
 ## Testing the Model on Unseen Data
@@ -351,15 +375,14 @@ import pickle
 import requests
 import pandas as pd
 from sklearn.metrics import accuracy_score, precision_score, recall_score, roc_auc_score
+from ringling_lib.ringling_db import RinglingDBSession
+from ringling_lib.trained_model import TrainedModel
+from ringling_lib.model_test import ModelTest
 
 
 # Set the endpoint url for parameter set creation
 BASE_URL = "http://localhost:8888"
-MODEL_URL = "/v1/trained_models"
-MODEL_TEST_URL = "/v1/model_tests"
-MODEL_REQUEST_URL = BASE_URL + MODEL_URL
-MODEL_TEST_REQUEST_URL = BASE_URL + MODEL_TEST_URL
-
+metadata = {"info4": "This is the Tutorial Model Test"}
 
 # Set this to the ID of the project you created earlier
 PROJECT_ID = 3
@@ -370,10 +393,10 @@ PARAMETER_SET_ID = 9
 # Set this to the ID of the trained model you created earlier
 TRAINED_MODEL_ID = 8
 
-# Send the request, get the pickled trained model, and unpickle it
-request_url = MODEL_REQUEST_URL + "/" + str(TRAINED_MODEL_ID)
-response = requests.get(request_url, timeout=5)
-pickled_model = response.json()["model_object"]
+# Create an instance of RinglingDB and retrieve the trained model
+session = RinglingDBSession(BASE_URL)
+trained_model = session.get_trained_model(TRAINED_MODEL_ID)
+pickled_model = trained_model.model_object
 model = pickle.loads(bytes.fromhex(pickled_model))
 
 # Load unseen test data
@@ -411,10 +434,18 @@ test_payload = {"project_id": PROJECT_ID,
                 "test_metrics": test_metrics,
                 "passed_testing": passed_testing}
 
-response = requests.post(MODEL_TEST_REQUEST_URL, json=test_payload, timeout=5)
+model_test_payload = ModelTest(PROJECT_ID,
+                               PARAMETER_SET_ID,
+                               TRAINED_MODEL_ID,
+                               test_timestamp,
+                               test_metrics,
+                               passed_testing,
+                               metadata)
+
+cur_id = session.create_model_test(model_test_payload)
 
 # Make sure it worked
-print(response.json())
+print(f"New Model Test created with ID {cur_id}")
 ```
 
 This should output:
@@ -423,7 +454,7 @@ Accuracy: 0.80583
 Precision: 0.77064
 Recall: 0.84848
 AUROC: 0.80742
-{'test_id': 6}
+New Model Test created with ID 6
 ```
 
 Now, let's see the model test it created using Ringling-cli:
@@ -433,7 +464,8 @@ ringling-cli localhost model-test get --id 6
 
 Output:
 ```bash
-{'model_id': 8,
+{'metadata': {'info4': 'This is the Tutorial Model Test'},
+ 'model_id': 8,
  'parameter_set_id': 9,
  'passed_testing': True,
  'project_id': 3,
@@ -442,8 +474,8 @@ Output:
                   'auroc': 0.8074199943358822,
                   'precision': 0.7706422018348624,
                   'recall': 0.8484848484848485},
- 'test_timestamp': '2023-08-15T12:37:35.950711'}
+ 'test_timestamp': '2023-10-24T14:44:25.676438'}
  ```
 
 ## Wrap Up
-And there we have it! In this tutorial, we first created an empty project. Then, we created a parameter set as a pickled, untrained Scikit-learn pipeline. Afterwards, we retrieved it from Ringling and trained it on some data, as well performed backtesting before saving it as a trained model object. Finally, we pulled it and tested it on some entirely unseen data and saved the test metrics as a model test object in Ringling.
+And there we have it! In this tutorial, we first created an empty project. Then, we created a parameter set as a pickled, untrained Scikit-learn pipeline. Afterward, we retrieved it from Ringling and trained it on some data, as well as performing backtesting before saving it as a trained model object. Finally, we pulled it and tested it on some entirely unseen data and saved the test metrics as a model test object in Ringling.

@@ -6,15 +6,14 @@ import pickle
 import requests
 import pandas as pd
 from sklearn.metrics import accuracy_score, precision_score, recall_score, roc_auc_score
+from ringling_lib.ringling_db import RinglingDBSession
+from ringling_lib.trained_model import TrainedModel
+from ringling_lib.model_test import ModelTest
 
 
 # Set the endpoint url for parameter set creation
 BASE_URL = "http://localhost:8888"
-MODEL_URL = "/v1/trained_models"
-MODEL_TEST_URL = "/v1/model_tests"
-MODEL_REQUEST_URL = BASE_URL + MODEL_URL
-MODEL_TEST_REQUEST_URL = BASE_URL + MODEL_TEST_URL
-
+metadata = {"info4": "This is the Tutorial Model Test"}
 
 # Set this to the ID of the project you created earlier
 PROJECT_ID = 3
@@ -25,10 +24,10 @@ PARAMETER_SET_ID = 9
 # Set this to the ID of the trained model you created earlier
 TRAINED_MODEL_ID = 8
 
-# Send the request, get the pickled trained model, and unpickle it
-REQUEST_URL = MODEL_REQUEST_URL + "/" + str(TRAINED_MODEL_ID)
-response = requests.get(REQUEST_URL, timeout=5)
-pickled_model = response.json()["model_object"]
+# Create an instance of RinglingDB and retrieve the trained model
+session = RinglingDBSession(BASE_URL)
+trained_model = session.get_trained_model(TRAINED_MODEL_ID)
+pickled_model = trained_model.model_object
 model = pickle.loads(bytes.fromhex(pickled_model))
 
 # Load unseen test data
@@ -66,7 +65,15 @@ test_payload = {"project_id": PROJECT_ID,
                 "test_metrics": test_metrics,
                 "passed_testing": passed_testing}
 
-response = requests.post(MODEL_TEST_REQUEST_URL, json=test_payload, timeout=5)
+model_test_payload = ModelTest(PROJECT_ID,
+                               PARAMETER_SET_ID,
+                               TRAINED_MODEL_ID,
+                               test_timestamp,
+                               test_metrics,
+                               passed_testing,
+                               metadata)
+
+cur_id = session.create_model_test(model_test_payload)
 
 # Make sure it worked
-print(response.json())
+print(f"New Model Test created with ID {cur_id}")

@@ -38,10 +38,11 @@ def get_url(base_url):
 def create_param_set(session, project_id, training_params, is_active, metadata):
     """
     Create a parameter set on the Ringling service
-    :param base_url: The URL of the Ringling Service
+    :param session: An instance of a Ringling DB session
     :param project_id: The ID of the project that the parameter set belongs to
     :param training_params: The parameters of the parameter set
     :param is_active: If the parameter set is active or inactive
+    :param metadata: Additional metadata
     :return: None
     """
     param = ParameterSet(project_id, training_params, is_active, metadata)
@@ -52,7 +53,7 @@ def create_param_set(session, project_id, training_params, is_active, metadata):
 def get_param_set(session, param_set_id):
     """
     Get a parameter set given an ID
-    :param base_url: The URL of the Ringling Service
+    :param session: An instance of a Ringling DB session
     :param param_set_id: The ID of the parameter set
     :return: None
     """
@@ -80,7 +81,7 @@ def modify_param_set(base_url, param_set_id, is_active):
 def list_param_sets(session):
     """
     List all the parameter sets in the Ringling Service
-    :param base_url: The URL of the Ringling Service
+    :param session: An instance of a Ringling DB session
     :return: None
     """
     pprint.pprint(session.list_param_sets_json())

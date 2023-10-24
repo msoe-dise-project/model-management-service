@@ -26,20 +26,12 @@ from .response_handling import perform_list
 from .response_handling import connection_error
 
 
-
-def get_url(base_url):
-    """
-    Get the URL for interacting with projects
-    :return: The project URL
-    """
-    return base_url + "/v1/projects"
-
-
 def create_project(session, project_name, metadata):
     """
     Create a project on the Ringling service
     :param session: An instance of Ringling DB session
     :param project_name: The name of the project to create
+    :param metadata: Additional metadata
     :return: The response from the service
     """
     proj = Project(project_name, metadata)
@@ -49,7 +41,7 @@ def create_project(session, project_name, metadata):
               f"likely already exists.", file=sys.stderr)
         sys.exit(1)
     else:
-        print(f"Project created with ID {cur_id}")
+        print(f"Project {project_name} created with ID {cur_id}")
 
 
 def list_projects(session):
@@ -65,7 +57,7 @@ def get_project(session, project_id):
     """
     Return information about a specific project in the Ringling Service by ID
     :param session: An instance of Ringling DB session
-    :param project_id:
+    :param project_id: The ID for the project to retrieve
     :return: None
     """
     pprint.pprint(session.get_project_json(project_id))

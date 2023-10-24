@@ -8,14 +8,14 @@ import requests
 import pandas as pd
 from sklearn.metrics import accuracy_score, precision_score, recall_score, roc_auc_score
 from sklearn.model_selection import train_test_split
+from ringling_lib.ringling_db import RinglingDBSession
+from ringling_lib.param_set import ParameterSet
+from ringling_lib.trained_model import TrainedModel
 
 
 # Set the endpoint url for parameter set get, and trained model create
 BASE_URL = "http://localhost:8888"
-PARAM_URL = "/v1/parameter_sets"
-MODEL_URL = "/v1/trained_models"
-PARAM_REQUEST_URL = BASE_URL + PARAM_URL
-MODEL_REQUEST_URL = BASE_URL + MODEL_URL
+metadata = {"info3": "This is the Tutorial Trained Model"}
 
 # Set this to the ID of the project you created earlier
 PROJECT_ID = 3
@@ -23,10 +23,10 @@ PROJECT_ID = 3
 # Set this to the ID of the parameter set you created earlier
 PARAMETER_SET_ID = 9
 
-# Send the request, get the pickled parameter set
-REQUEST_URL = PARAM_REQUEST_URL + "/" + str(PARAMETER_SET_ID)
-response = requests.get(REQUEST_URL, timeout=5)
-pickled_pipeline = response.json()["training_parameters"]
+# Create an instance of RinglingDB and retrieve the parameter set
+session = RinglingDBSession(BASE_URL)
+param_set = session.get_param_set(PARAMETER_SET_ID)
+pickled_pipeline = param_set.training_parameters
 
 pipeline = pickle.loads(bytes.fromhex(pickled_pipeline))
 
@@ -107,18 +107,19 @@ pipeline.fit(X, y)
 pipeline_object = pickle.dumps(pipeline).hex()
 
 # Save the model to Ringling
-model_payload = {"project_id": PROJECT_ID,
-                 "parameter_set_id": PARAMETER_SET_ID,
-                 "training_data_from": "1988-01-01T00:00:00.000000",
-                 "training_data_until": "1988-12-31T23:59:59.999999",
-                 "model_object": pipeline_object,
-                 "train_timestamp": train_timestamp,
-                 "deployment_stage": "testing",
-                 "backtest_timestamp": test_timestamp,
-                 "backtest_metrics": test_metrics,
-                 "passed_backtesting": passed_testing}
+trained_model_payload = TrainedModel(PROJECT_ID,
+                                     PARAMETER_SET_ID,
+                                     "1988-01-01T00:00:00.000000",
+                                     "1988-12-31T23:59:59.999999",
+                                     pipeline_object,
+                                     train_timestamp,
+                                     "testing",
+                                     test_timestamp,
+                                     test_metrics,
+                                     passed_testing,
+                                     metadata)
 
-response = requests.post(MODEL_REQUEST_URL, json=model_payload, timeout=5)
+cur_id = session.create_trained_model(trained_model_payload)
 
 # Make sure it worked
-print(response.json())
+print(f"New Trained Model created with ID {cur_id}")
