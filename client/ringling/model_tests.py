@@ -24,20 +24,10 @@ from .response_handling import handle_get
 from .response_handling import perform_list
 from .response_handling import connection_error
 
-
-
-def get_url(base_url):
-    """
-    Get the URL for interacting with projects
-    :return: The project URL
-    """
-    return base_url + "/v1/model_tests"
-
-
 def create_model_test(session, obj):
     """
     Create a model test on the Ringling service
-    :param base_url: The URL of the Ringling Service
+    :param session: An instance of a Ringling DB session
     :param obj: The model object payload
     :return: None
     """
@@ -48,7 +38,7 @@ def create_model_test(session, obj):
 def get_model_test(session, model_test_id):
     """
     Get a model test given an ID
-    :param base_url: The URL of the Ringling Service
+    :param session: An instance of a Ringling DB session
     :param model_test_id: The ID of the model test
     :return: None
     """
@@ -58,7 +48,7 @@ def get_model_test(session, model_test_id):
 def list_model_tests(session):
     """
     List all the model tests in the Ringling Service
-    :param base_url: The URL of the Ringling Service
+    :param session: An instance of a Ringling DB session
     :return: None
     """
     pprint.pprint(session.list_model_tests_json())
