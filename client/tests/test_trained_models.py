@@ -33,8 +33,8 @@ class TestTrainedModels(unittest.TestCase):
         session = RinglingDBSession(base_url)
         obj = {"project_id": 3,
                  "parameter_set_id": 2,
-                 "training_data_from": "1995-01-01T01:00:00.0000",
-                 "training_data_until": "2000-12-31T17:59:59.9999",
+                 "training_data_from": "1995-01-01T01:00:00.000000",
+                 "training_data_until": "2000-12-31T17:59:59.999999",
                  "model_object": "0x00a5234f6123371",
                  "train_timestamp": datetime.now().isoformat(),
                  "deployment_stage": "testing",

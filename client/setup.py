@@ -17,13 +17,13 @@ limitations under the License.
 from setuptools import setup
 
 setup(name="ringling-cli",
-      version="0.1",
-      description="Client for Ringling",
+      version="1.0",
+      description="Client and Library for Ringling",
       author="MSOE DISE Project",
       author_email="nowling@msoe.edu",
       license="Apache License, Version 2.0",
       zip_safe=False,
-      packages=["ringling"],
-      python_requires=">=3.8",
+      packages=["ringling", "ringling_lib"],
+      python_requires=">=3.8, <3.12",
       install_requires=["requests"],
       scripts=["bin/ringling-cli"])
