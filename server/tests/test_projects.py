@@ -4,9 +4,8 @@ Run tests for Ringling projects
 # pylint: disable=duplicate-code
 import os
 import unittest
-
-import requests
 from datetime import datetime
+import requests
 from test_utils import check_base_url
 
 BASE_URL_KEY = "BASE_URL"
