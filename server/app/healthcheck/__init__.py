@@ -32,7 +32,6 @@ def healthcheck():
                 successful_connection = True
 
                 for table in tables:
-                    print(f"SELECT count(*) FROM {table}")
                     cur.execute(f"SELECT count(*) FROM {table}")
                     count = cur.fetchone()[0]
                     successful_queries.append(count)

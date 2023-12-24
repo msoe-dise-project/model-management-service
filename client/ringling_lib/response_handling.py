@@ -60,7 +60,7 @@ def handle_get(response, object_type, cur_id):
 def perform_list(rest_url):
     """
     Get the list from the REST url
-    :param rest_url: The url to perform GET on
+    :param rest_url: The url to perform get on
     :return: None
     """
     try:

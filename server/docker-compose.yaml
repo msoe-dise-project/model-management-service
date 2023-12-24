@@ -26,6 +26,8 @@ services:
       db:
         condition: service_healthy
     environment:
+      POSTGRES_LOG_MIN_MESSAGES: warning
+      POSTGRES_LOG_STATEMENT: none
       POSTGRES_HOST: "db"
       POSTGRES_USER_PASSWORD: "abadpassword"
       POSTGRES_ADMIN_PASSWORD: "postgres"

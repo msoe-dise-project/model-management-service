@@ -106,7 +106,6 @@ def get_model_by_id(model_id):
                     "model_object, train_timestamp, deployment_stage, " \
                     "backtest_timestamp, backtest_metrics, passed_backtesting, metadata " + \
                     "FROM trained_models WHERE model_id = %s"
-            print(query)
             cur.execute(query, (model_id,))
             result = cur.fetchone()
             if result is None:

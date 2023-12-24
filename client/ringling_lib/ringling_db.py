@@ -175,7 +175,7 @@ class RinglingDBSession:
 
         try:
             response = requests.post(self.param_url,
-                                     json=obj, timeout=5)
+                                     json=obj, timeout=60)
             if handle_create(response):
                 return response.json()['parameter_set_id']
             return None
@@ -193,7 +193,7 @@ class RinglingDBSession:
 
         try:
             response = requests.post(self.trained_model_url,
-                                     json=obj, timeout=5)
+                                     json=obj, timeout=60)
             if handle_create(response):
                 return response.json()['model_id']
         except RequestsConnectionError:
@@ -254,7 +254,7 @@ class RinglingDBSession:
         """
         url = self.param_url + "/" + str(cur_id)
         try:
-            response = requests.get(url, timeout=5)
+            response = requests.get(url, timeout=60)
             return handle_get(response, "Parameter Set", cur_id)
         except RequestsConnectionError:
             connection_error()
@@ -284,7 +284,7 @@ class RinglingDBSession:
         """
         url = self.trained_model_url + "/" + str(cur_id)
         try:
-            response = requests.get(url, timeout=5)
+            response = requests.get(url, timeout=60)
             return handle_get(response, "Trained Model", cur_id)
         except RequestsConnectionError:
             connection_error()
